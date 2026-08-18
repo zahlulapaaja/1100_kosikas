@@ -3,9 +3,20 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MaskapaiController;
 use App\Http\Controllers\WilayahController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/bookings');
+
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout');
 
 Route::resource('bookings', BookingController::class)->except(['show']);
 Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');

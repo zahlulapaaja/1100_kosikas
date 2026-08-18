@@ -36,5 +36,7 @@ class DatabaseSeeder extends Seeder
         foreach ($wilayahs as $w) {
             Wilayah::firstOrCreate(['airport_code' => $w['airport_code']], $w);
         }
+
+        $this->call(DefaultUserSeeder::class);
     }
 }

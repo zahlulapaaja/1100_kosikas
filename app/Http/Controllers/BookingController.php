@@ -28,6 +28,7 @@ class BookingController extends Controller
             ->withQueryString();
 
         return view('bookings.index', compact('bookings'));
+        return view('preview');
     }
 
     /**

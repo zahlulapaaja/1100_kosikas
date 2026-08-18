@@ -18,22 +18,10 @@
     @stack('styles')
 </head>
 
-<body>
+<body class="kt-guest-body">
 
-    @include('layouts.partials.navbar')
-
-    <div class="kt-shell">
-
-        @auth
-            @include('layouts.partials.sidebar')
-        @endauth
-
-        <main class="kt-main @auth kt-main-with-sidebar @endauth">
-            <div class="container-fluid p-3 p-lg-4">
-                @yield('content')
-            </div>
-        </main>
-
+    <div class="kt-guest-wrap">
+        @yield('content')
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
