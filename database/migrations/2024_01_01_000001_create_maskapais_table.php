@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('maskapais', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->string('code', 10)->unique();
+            $table->string('code_iata', 10)->unique();
+            $table->string('code_icao', 10)->unique();
             $table->timestamps();
         });
     }
