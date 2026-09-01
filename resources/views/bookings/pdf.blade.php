@@ -465,7 +465,8 @@
                     <strong>{{ strtoupper($booking->pnr) }}</strong>
                 </td>
                 <td style="width:50%; text-align:right;">
-                    <span class="meta-label">Issued Date :</span> {{ $booking->issued_date->translatedFormat('d M Y') }}<br>
+                    <span class="meta-label">Issued Date :</span>
+                    {{ $booking->issued_date->translatedFormat('d M Y') }}<br>
                     <span class="meta-label">Print Date :</span> {{ now()->translatedFormat('d M Y, H:i') }}
                 </td>
             </tr>
@@ -475,80 +476,85 @@
         <p class="section-title">Flight Detail(s)</p>
 
         @foreach ($booking->flights as $i => $flight)
-        @php
-        $durationLabel = null;
-        try {
-        $dep = \Carbon\Carbon::parse($flight->dep_time);
-        $arr = \Carbon\Carbon::parse($flight->arr_time);
-        if ($arr->lessThan($dep)) { $arr->addDay(); }
-        $diffH = $dep->diffInHours($arr);
-        $diffM = $dep->diffInMinutes($arr) % 60;
-        $durationLabel = sprintf('%dj %02dm', $diffH, $diffM);
-        } catch (\Throwable $e) {
-        $durationLabel = null;
-        }
-        @endphp
-        <div class="segment-card">
-            <div class="segment-head">
-                Flight {{ $i + 1 }}: {{ $flight->origin->city_name }} &rarr; {{ $flight->destination->city_name }}
-                &nbsp;|&nbsp; {{ $flight->departure_date->translatedFormat('D, d M Y') }}
+            @php
+                $durationLabel = null;
+                try {
+                    $dep = \Carbon\Carbon::parse($flight->dep_time);
+                    $arr = \Carbon\Carbon::parse($flight->arr_time);
+                    if ($arr->lessThan($dep)) {
+                        $arr->addDay();
+                    }
+                    $diffH = $dep->diffInHours($arr);
+                    $diffM = $dep->diffInMinutes($arr) % 60;
+                    $durationLabel = sprintf('%dj %02dm', $diffH, $diffM);
+                } catch (\Throwable $e) {
+                    $durationLabel = null;
+                }
+            @endphp
+            <div class="segment-card">
+                <div class="segment-head">
+                    Flight {{ $i + 1 }}: {{ $flight->origin->city_name }} &rarr;
+                    {{ $flight->destination->city_name }}
+                    &nbsp;|&nbsp; {{ $flight->departure_date->translatedFormat('D, d M Y') }}
+                </div>
+                <div class="segment-body">
+                    <table>
+                        <tr>
+                            <td class="seg-info-col">
+                                <div class="seg-pnr-label">PNR</div>
+                                <div class="seg-pnr-value">{{ strtoupper($booking->pnr) }}</div>
+                                <table style="border-collapse:collapse;">
+                                    <tr>
+                                        <td style="border:none; padding:0; width:30px;">
+                                            <span class="airline-badge">{{ $flight->maskapai->code }}</span>
+                                        </td>
+                                        <td style="border:none; padding:0 0 0 6px;">
+                                            <div class="airline-name">{{ $flight->maskapai->name }}</div>
+                                            <div class="flight-no">{{ $flight->maskapai->code }} -
+                                                {{ $flight->flight_no }}</div>
+                                        </td>
+                                    </tr>
+                                </table>
+                                @if ($flight->subclass)
+                                    <div class="flight-class">{{ strtoupper($flight->subclass) }} - Economy</div>
+                                @endif
+                            </td>
+                            <td class="seg-route-col">
+                                <table style="border-collapse:collapse;">
+                                    <tr>
+                                        <td style="border:none; padding:0; width:38%;">
+                                            <div class="seg-code">{{ $flight->origin->airport_code }}</div>
+                                            <div class="seg-airport">{{ $flight->origin->city_name }}</div>
+                                            <div class="seg-datetime">
+                                                {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
+                                                <strong>{{ $flight->dep_time }}</strong>
+                                            </div>
+                                        </td>
+                                        <td style="border:none; padding:0; width:24%; text-align:center;"
+                                            class="seg-arrow">
+                                            &#9992;<br>
+                                            @if ($durationLabel)
+                                                <span class="seg-duration">{{ $durationLabel }}</span>
+                                            @endif
+                                        </td>
+                                        <td style="border:none; padding:0; width:38%; text-align:right;">
+                                            <div class="seg-code">{{ $flight->destination->airport_code }}</div>
+                                            <div class="seg-airport">{{ $flight->destination->city_name }}</div>
+                                            <div class="seg-datetime">
+                                                {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
+                                                <strong>{{ $flight->arr_time }}</strong>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="seg-transit-col">
+                                <span class="transit-badge">Direct</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div class="segment-body">
-                <table>
-                    <tr>
-                        <td class="seg-info-col">
-                            <div class="seg-pnr-label">PNR</div>
-                            <div class="seg-pnr-value">{{ strtoupper($booking->pnr) }}</div>
-                            <table style="border-collapse:collapse;">
-                                <tr>
-                                    <td style="border:none; padding:0; width:30px;">
-                                        <span class="airline-badge">{{ $flight->maskapai->code }}</span>
-                                    </td>
-                                    <td style="border:none; padding:0 0 0 6px;">
-                                        <div class="airline-name">{{ $flight->maskapai->name }}</div>
-                                        <div class="flight-no">{{ $flight->maskapai->code }} - {{ $flight->flight_no }}</div>
-                                    </td>
-                                </tr>
-                            </table>
-                            @if($flight->subclass)
-                            <div class="flight-class">{{ strtoupper($flight->subclass) }} - Economy</div>
-                            @endif
-                        </td>
-                        <td class="seg-route-col">
-                            <table style="border-collapse:collapse;">
-                                <tr>
-                                    <td style="border:none; padding:0; width:38%;">
-                                        <div class="seg-code">{{ $flight->origin->airport_code }}</div>
-                                        <div class="seg-airport">{{ $flight->origin->city_name }}</div>
-                                        <div class="seg-datetime">
-                                            {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
-                                            <strong>{{ $flight->dep_time }}</strong>
-                                        </div>
-                                    </td>
-                                    <td style="border:none; padding:0; width:24%; text-align:center;" class="seg-arrow">
-                                        &#9992;<br>
-                                        @if($durationLabel)
-                                        <span class="seg-duration">{{ $durationLabel }}</span>
-                                        @endif
-                                    </td>
-                                    <td style="border:none; padding:0; width:38%; text-align:right;">
-                                        <div class="seg-code">{{ $flight->destination->airport_code }}</div>
-                                        <div class="seg-airport">{{ $flight->destination->city_name }}</div>
-                                        <div class="seg-datetime">
-                                            {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
-                                            <strong>{{ $flight->arr_time }}</strong>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                        <td class="seg-transit-col">
-                            <span class="transit-badge">Direct</span>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
         @endforeach
 
         {{-- Passenger Details --}}
@@ -566,27 +572,29 @@
                 </thead>
                 <tbody>
                     @foreach ($booking->passengers as $i => $p)
-                    <tr>
-                        <td>{{ $i + 1 }}</td>
-                        <td><strong>{{ $p->title }} {{ $p->name }}</strong> <span style="color:#9aa6b5;">({{ strtoupper(substr($p->type,0,3)) }})</span></td>
-                        <td>{{ $p->type }}</td>
-                        <td>{{ $p->id_number }}</td>
-                        <td>{{ $p->ticket_number }}</td>
-                    </tr>
-                    @if($p->baggage || $booking->flights->count())
-                    <tr>
-                        <td style="border-bottom:1px solid #e2e8f0;"></td>
-                        <td colspan="4" class="facility-block" style="border-bottom:1px solid #e2e8f0;">
-                            <span class="facility-title">Facility(s):</span>
-                            @foreach ($booking->flights as $flight)
-                            <div class="facility-row">
-                                {{ $flight->origin->airport_code }} - {{ $flight->destination->airport_code }}
-                                &nbsp;&#127890;&nbsp; Baggage Allowance {{ $p->baggage ?: '-' }}
-                            </div>
-                            @endforeach
-                        </td>
-                    </tr>
-                    @endif
+                        <tr>
+                            <td>{{ $i + 1 }}</td>
+                            <td><strong>{{ $p->title }} {{ $p->name }}</strong> <span
+                                    style="color:#9aa6b5;">({{ strtoupper(substr($p->type, 0, 3)) }})</span></td>
+                            <td>{{ $p->type }}</td>
+                            <td>{{ $p->id_number }}</td>
+                            <td>{{ $p->ticket_number }}</td>
+                        </tr>
+                        @if ($p->baggage || $booking->flights->count())
+                            <tr>
+                                <td style="border-bottom:1px solid #e2e8f0;"></td>
+                                <td colspan="4" class="facility-block" style="border-bottom:1px solid #e2e8f0;">
+                                    <span class="facility-title">Facility(s):</span>
+                                    @foreach ($booking->flights as $flight)
+                                        <div class="facility-row">
+                                            {{ $flight->origin->airport_code }} -
+                                            {{ $flight->destination->airport_code }}
+                                            &nbsp;&#127890;&nbsp; Baggage Allowance {{ $p->baggage ?: '-' }}
+                                        </div>
+                                    @endforeach
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                 </tbody>
             </table>
@@ -610,7 +618,8 @@
                 </tr>
                 <tr class="fare-total-row">
                     <td>Grand Total</td>
-                    <td class="fare-value">{{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}</td>
+                    <td class="fare-value">{{ strtoupper($booking->currency) }}
+                        {{ number_format($booking->total_fare, 0, ',', '.') }}</td>
                 </tr>
             </table>
         </div>
@@ -632,7 +641,8 @@
             <p class="notes-subtitle">Reissue &amp; Reschedule</p>
             <ul>
                 <li>Please recheck all booking details before the ticket is issued.</li>
-                <li>Any changes made after the ticket is issued may be subject to additional fees, based on the airline's current rules.</li>
+                <li>Any changes made after the ticket is issued may be subject to additional fees, based on the
+                    airline's current rules.</li>
             </ul>
 
             <div class="notes-divider"></div>
@@ -651,12 +661,14 @@
             <p class="notes-subtitle">Penerbitan &amp; Reschedule</p>
             <ul>
                 <li>Mohon periksa kembali rincian pemesanan sebelum tiket diterbitkan.</li>
-                <li>Perubahan setelah tiket terbit dapat dikenakan biaya tambahan sesuai kebijakan maskapai terbaru.</li>
+                <li>Perubahan setelah tiket terbit dapat dikenakan biaya tambahan sesuai kebijakan maskapai terbaru.
+                </li>
             </ul>
         </div>
 
         <p class="no-print-warning">
-            E-Ticket ini dibuat secara elektronik dan sah tanpa tanda tangan basah. Simpan dokumen ini untuk keperluan check-in.
+            E-Ticket ini dibuat secara elektronik dan sah tanpa tanda tangan basah. Simpan dokumen ini untuk keperluan
+            check-in.
         </p>
 
     </div>
@@ -668,7 +680,8 @@
                 <td style="width:60%;">
                     <p class="footer-company">{{ strtoupper($booking->agency_name) }}</p>
                     <div>{{ $booking->agency_tagline }}</div>
-                    <div class="footer-caption">Dokumen ini dicetak otomatis oleh sistem &mdash; {{ now()->translatedFormat('d M Y, H:i') }} WIB.</div>
+                    <div class="footer-caption">Dokumen ini dicetak otomatis oleh sistem &mdash;
+                        {{ now()->translatedFormat('d M Y, H:i') }} WIB.</div>
                 </td>
                 <td style="width:40%; text-align:right;">
                     Contact Customer Care<br>
