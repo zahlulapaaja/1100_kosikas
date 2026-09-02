@@ -28,7 +28,7 @@ class BookingController extends Controller
             ->withQueryString();
 
         return view('bookings.index', compact('bookings'));
-        return view('preview');
+        // return view('preview');
     }
 
     /**
@@ -217,7 +217,7 @@ class BookingController extends Controller
         foreach ($maskapais as $m) {
             $options[] = [
                 'id'    => $m->id,
-                'label' => $m->name . ' (' . $m->code . ')',
+                'label' => $m->name . ' (' . $m->code_iata . ')',
             ];
         }
 
@@ -234,7 +234,7 @@ class BookingController extends Controller
         foreach ($wilayahs as $w) {
             $options[] = [
                 'id'    => $w->id,
-                'label' => $w->city_name . ' (' . $w->airport_code . ')',
+                'label' => $w->city_name . ' (' . $w->code_iata . ')',
             ];
         }
 

@@ -75,7 +75,11 @@
             </table>
         </div>
         @if ($bookings->hasPages())
-            <div class="card-footer bg-white">
+            <div class="card-footer bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <small class="text-muted">
+                    Menampilkan {{ $bookings->firstItem() }}–{{ $bookings->lastItem() }}
+                    dari {{ $bookings->total() }} data
+                </small>
                 {{ $bookings->links() }}
             </div>
         @endif

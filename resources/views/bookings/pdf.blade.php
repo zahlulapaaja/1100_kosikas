@@ -531,11 +531,11 @@ $logoPath = public_path('images/logo-kosikas.png');
                                 <table>
                                     <tr>
                                         <td style="width:28px;">
-                                            <span class="airline-badge">{{ $flight->maskapai->code }}</span>
+                                            <span class="airline-badge">{{ $flight->maskapai->code_iata }}</span>
                                         </td>
                                         <td style="padding-left:6px;">
                                             <div class="airline-name">{{ $flight->maskapai->name }}</div>
-                                            <div class="flight-no">{{ $flight->maskapai->code }}
+                                            <div class="flight-no">{{ $flight->maskapai->code_iata }}
                                                 {{ $flight->flight_no }}</div>
                                         </td>
                                     </tr>
@@ -549,7 +549,7 @@ $logoPath = public_path('images/logo-kosikas.png');
                                 <table>
                                     <tr>
                                         <td style="width:38%;">
-                                            <div class="seg-code">{{ $flight->origin->airport_code }}</div>
+                                            <div class="seg-code">{{ $flight->origin->code_iata }}</div>
                                             <div class="seg-airport">{{ $flight->origin->city_name }}</div>
                                             <div class="seg-datetime">
                                                 {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
@@ -563,7 +563,7 @@ $logoPath = public_path('images/logo-kosikas.png');
                                             @endif
                                         </td>
                                         <td style="width:38%; text-align:right;">
-                                            <div class="seg-code">{{ $flight->destination->airport_code }}</div>
+                                            <div class="seg-code">{{ $flight->destination->code_iata }}</div>
                                             <div class="seg-airport">{{ $flight->destination->city_name }}</div>
                                             <div class="seg-datetime">
                                                 {{ $flight->departure_date->translatedFormat('d M Y') }}<br>
@@ -618,7 +618,7 @@ $logoPath = public_path('images/logo-kosikas.png');
                     @foreach ($booking->flights as $flight)
                         <div class="facility-row">
                             {{ $p->title }} {{ $p->name }} &middot;
-                            {{ $flight->origin->airport_code }}-{{ $flight->destination->airport_code }}
+                            {{ $flight->origin->code_iata }}-{{ $flight->destination->code_iata }}
                             &nbsp;&#9992;&nbsp; {{ $p->baggage ?: 'Cabin only' }}
                         </div>
                     @endforeach
