@@ -68,7 +68,7 @@ class BookingController extends Controller
             $this->syncFlightsAndPassengers($booking, $data);
         });
 
-        return redirect()->route('bookings.index')->with('success', 'E-ticket berhasil disimpan.');
+        return redirect()->route('travel.bookings.index')->with('success', 'E-ticket berhasil disimpan.');
     }
 
     /**
@@ -132,7 +132,7 @@ class BookingController extends Controller
             $this->syncFlightsAndPassengers($booking, $data);
         });
 
-        return redirect()->route('bookings.index')->with('success', 'E-ticket berhasil diperbarui.');
+        return redirect()->route('travel.bookings.index')->with('success', 'E-ticket berhasil diperbarui.');
     }
 
     /**

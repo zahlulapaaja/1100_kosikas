@@ -6,7 +6,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="section-title mb-0"><i class="bi bi-ticket-perforated-fill me-2"></i>Daftar E-Ticket</h4>
-        <a href="{{ route('bookings.create') }}" class="btn btn-success">
+        <a href="{{ route('travel.bookings.create') }}" class="btn btn-success">
             <i class="bi bi-plus-lg me-1"></i>Buat E-Ticket Baru
         </a>
     </div>
@@ -16,7 +16,7 @@
             <form method="GET" class="row g-2">
                 <div class="col-md-9">
                     <input type="text" name="q" value="{{ request('q') }}" class="form-control"
-                           placeholder="Cari berdasarkan PNR atau nama penumpang...">
+                        placeholder="Cari berdasarkan PNR atau nama penumpang...">
                 </div>
                 <div class="col-md-3 d-grid">
                     <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search me-1"></i>Cari</button>
@@ -47,14 +47,17 @@
                             <td>{{ $booking->passengers_count }}</td>
                             <td>{{ $booking->currency }} {{ number_format($booking->total_fare, 0, ',', '.') }}</td>
                             <td class="text-end">
-                                <a href="{{ route('bookings.pdf', $booking) }}" target="_blank" class="btn btn-sm btn-outline-danger" title="Cetak PDF">
+                                <a href="{{ route('travel.bookings.pdf', $booking) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-danger" title="Cetak PDF">
                                     <i class="bi bi-file-earmark-pdf"></i>
                                 </a>
-                                <a href="{{ route('bookings.edit', $booking) }}" class="btn btn-sm btn-outline-primary" title="Edit">
+                                <a href="{{ route('travel.bookings.edit', $booking) }}"
+                                    class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form action="{{ route('bookings.destroy', $booking) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Hapus e-ticket dengan PNR {{ $booking->pnr }}?');">
+                                <form action="{{ route('travel.bookings.destroy', $booking) }}" method="POST"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Hapus e-ticket dengan PNR {{ $booking->pnr }}?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-secondary" title="Hapus">

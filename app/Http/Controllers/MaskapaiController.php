@@ -10,9 +10,10 @@ class MaskapaiController extends Controller
     public function index(Request $request)
     {
         $maskapais = Maskapai::when($request->q, function ($query) use ($request) {
-                $query->where('name', 'like', "%{$request->q}%")
-                      ->orWhere('code', 'like', "%{$request->q}%");
-            })
+            $query->where('name', 'like', "%{$request->q}%")
+                ->orWhere('code_iata', 'like', "%{$request->q}%")
+                ->orWhere('code_icao', 'like', "%{$request->q}%");
+        })
             ->withCount('flights')
             ->orderBy('name')
             ->paginate(10)
@@ -29,13 +30,17 @@ class MaskapaiController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:100',
-            'code' => 'required|string|max:10|unique:maskapais,code',
+            'name'      => 'required|string|max:100',
+            'code_iata' => 'required|string|max:10|unique:maskapais,code_iata',
+            'code_icao' => 'required|string|max:10|unique:maskapais,code_icao',
         ]);
+
+        $data['code_iata'] = strtoupper($data['code_iata']);
+        $data['code_icao'] = strtoupper($data['code_icao']);
 
         Maskapai::create($data);
 
-        return redirect()->route('maskapai.index')->with('success', 'Maskapai berhasil ditambahkan.');
+        return redirect()->route('travel.maskapai.index')->with('success', 'Maskapai berhasil ditambahkan.');
     }
 
     public function edit(Maskapai $maskapai)
@@ -46,13 +51,17 @@ class MaskapaiController extends Controller
     public function update(Request $request, Maskapai $maskapai)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:100',
-            'code' => 'required|string|max:10|unique:maskapais,code,' . $maskapai->id,
+            'name'      => 'required|string|max:100',
+            'code_iata' => 'required|string|max:10|unique:maskapais,code_iata,' . $maskapai->id,
+            'code_icao' => 'required|string|max:10|unique:maskapais,code_icao,' . $maskapai->id,
         ]);
+
+        $data['code_iata'] = strtoupper($data['code_iata']);
+        $data['code_icao'] = strtoupper($data['code_icao']);
 
         $maskapai->update($data);
 
-        return redirect()->route('maskapai.index')->with('success', 'Maskapai berhasil diperbarui.');
+        return redirect()->route('travel.maskapai.index')->with('success', 'Maskapai berhasil diperbarui.');
     }
 
     public function destroy(Maskapai $maskapai)

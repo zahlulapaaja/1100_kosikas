@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/bookings');
 
 
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
@@ -18,8 +19,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
-Route::resource('bookings', BookingController::class)->except(['show']);
-Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');
+Route::name('travel.')->group(function () {
+    Route::resource('bookings', BookingController::class)->except(['show']);
+    Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');
 
-Route::resource('maskapai', MaskapaiController::class)->except(['show']);
-Route::resource('wilayah', WilayahController::class)->except(['show']);
+    Route::resource('maskapai', MaskapaiController::class)->except(['show']);
+    Route::resource('wilayah', WilayahController::class)->except(['show']);
+});
