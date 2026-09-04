@@ -7,7 +7,7 @@
 
     <div class="card card-section">
         <div class="card-body">
-            <form action="{{ route('travel.maskapai.update', $maskapai) }}" method="POST">
+            <form action="{{ route('travel.maskapai.update', $maskapai) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="mb-3">
@@ -35,6 +35,24 @@
                             <div class="text-danger small">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Logo Maskapai</label>
+
+                    @if ($maskapai->logo)
+                        <div class="mb-2">
+                            <img src="{{ asset($maskapai->logo) }}" alt="{{ $maskapai->name }}"
+                                style="width:64px;height:64px;object-fit:contain;border:1px solid #e9ecef;border-radius:8px;padding:6px;background:#fff;">
+                            <div class="form-text">Logo saat ini. Upload file baru untuk menggantinya.</div>
+                        </div>
+                    @endif
+
+                    <input type="file" name="logo" class="form-control" accept="image/png,image/jpeg,image/webp">
+                    <small class="text-muted">Opsional. Format PNG/JPG/WEBP, maks. 2MB. Otomatis dipakai di PDF
+                        e-ticket.</small>
+                    @error('logo')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <a href="{{ route('travel.maskapai.index') }}" class="btn btn-outline-secondary">Batal</a>
                 <button type="submit" class="btn btn-success"><i class="bi bi-save2-fill me-1"></i>Simpan

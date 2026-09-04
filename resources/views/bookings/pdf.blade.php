@@ -437,11 +437,20 @@
                 $isNewCard = $i === 0 || !$prevConnecting;
 
                 $airlineCode = $flight->maskapai->code_iata ?? '';
-                $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
-                $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
 
-                $originCode = $flight->origin->code_iata ?? '';
-                $destCode = $flight->destination->code_iata ?? '';
+                // Prefer the actual uploaded logo (any extension, stored in maskapai->logo).
+                // Fall back to guessing a .png at the old naming convention for maskapai
+                // rows that haven't been re-saved through the upload form yet.
+if (!empty($flight->maskapai->logo) && file_exists(public_path($flight->maskapai->logo))) {
+    $airlineLogoPath = public_path($flight->maskapai->logo);
+    $airlineLogoExists = true;
+} else {
+    $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
+    $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
+}
+
+$originCode = $flight->origin->code_iata ?? '';
+$destCode = $flight->destination->code_iata ?? '';
             @endphp
 
             @if ($isNewCard)

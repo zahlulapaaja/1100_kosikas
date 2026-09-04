@@ -60,6 +60,7 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
+                            <th style="width:60px;">Logo</th>
                             <th style="width:130px;">Kode IATA</th>
                             <th style="width:130px;">Kode ICAO</th>
                             <th>Nama Maskapai</th>
@@ -70,6 +71,17 @@
                     <tbody>
                         @forelse ($maskapais as $m)
                             <tr>
+                                <td>
+                                    @if ($m->logo)
+                                        <img src="{{ asset($m->logo) }}" alt="{{ $m->name }}"
+                                            style="width:40px;height:40px;object-fit:contain;border:1px solid #e9ecef;border-radius:8px;padding:4px;background:#fff;">
+                                    @else
+                                        <div class="rounded-circle bg-secondary-subtle text-secondary-emphasis d-flex align-items-center justify-content-center fw-semibold"
+                                            style="width:40px;height:40px;font-size:.7rem;">
+                                            {{ strtoupper(substr($m->code_iata, 0, 2)) }}
+                                        </div>
+                                    @endif
+                                </td>
                                 <td><span
                                         class="badge bg-secondary-subtle text-secondary-emphasis fw-semibold">{{ $m->code_iata }}</span>
                                 </td>
@@ -83,8 +95,8 @@
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <a href="{{ route('travel.maskapai.edit', $m) }}" class="btn btn-sm btn-outline-primary"
-                                        title="Edit">
+                                    <a href="{{ route('travel.maskapai.edit', $m) }}"
+                                        class="btn btn-sm btn-outline-primary" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </a>
                                     <form action="{{ route('travel.maskapai.destroy', $m) }}" method="POST"
@@ -99,7 +111,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center text-muted py-5">
                                     <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                                     Belum ada data maskapai.
                                 </td>

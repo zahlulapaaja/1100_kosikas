@@ -7,7 +7,7 @@
 
     <div class="card card-section">
         <div class="card-body">
-            <form action="{{ route('travel.maskapai.store') }}" method="POST">
+            <form action="{{ route('travel.maskapai.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="mb-3">
                     <label class="form-label">Nama Maskapai</label>
@@ -34,6 +34,15 @@
                             <div class="text-danger small">{{ $message }}</div>
                         @enderror
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Logo Maskapai</label>
+                    <input type="file" name="logo" class="form-control" accept="image/png,image/jpeg,image/webp">
+                    <small class="text-muted">Opsional. Format PNG/JPG/WEBP, maks. 2MB. Otomatis dipakai di PDF
+                        e-ticket.</small>
+                    @error('logo')
+                        <div class="text-danger small">{{ $message }}</div>
+                    @enderror
                 </div>
                 <a href="{{ route('travel.maskapai.index') }}" class="btn btn-outline-secondary">Batal</a>
                 <button type="submit" class="btn btn-success"><i class="bi bi-save2-fill me-1"></i>Simpan</button>
