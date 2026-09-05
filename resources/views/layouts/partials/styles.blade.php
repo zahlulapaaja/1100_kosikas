@@ -356,7 +356,7 @@
         color: #fff;
     }
 
-    /* page heading helper used inside @yield('content')
+    /* page heading helper used inside the content section */
 
     */ .kt-page-title {
         font-family: var(--font-display);
