@@ -22,6 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::name('travel.')->group(function () {
     Route::resource('bookings', BookingController::class)->except(['show']);
     Route::get('bookings/{booking}/pdf', [BookingController::class, 'pdf'])->name('bookings.pdf');
+    Route::post('bookings/{booking}/duplicate', [BookingController::class, 'duplicate'])->name('bookings.duplicate');
 
     Route::resource('maskapai', MaskapaiController::class)->except(['show']);
     Route::resource('wilayah', WilayahController::class)->except(['show']);

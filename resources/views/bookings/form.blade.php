@@ -83,7 +83,7 @@
                     <div class="col-12">
                         <label class="form-label">Catatan Fare (opsional)</label>
                         <input type="text" name="fare_note" class="form-control"
-                            value="{{ old('fare_note', $booking->fare_note ?? 'Includes Base Fare, Taxes, Fees and Surcharges') }}">
+                            value="{{ old('fare_note', $booking->fare_note ?? 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.') }}">
                     </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">No. Penerbangan</label>
-                <input type="text" name="flights[${i}][flight_no]" class="form-control" placeholder="IU 995" value="${f.flight_no ?? ''}" required>
+                <input type="text" name="flights[${i}][flight_no]" class="form-control" placeholder="000" value="${f.flight_no ?? ''}" required>
             </div>
             <div class="col-md-3">
                 <label class="form-label">Tanggal Berangkat</label>
@@ -161,7 +161,7 @@
             </div>
             <div class="col-md-2">
                 <label class="form-label">Sub Class</label>
-                <input type="text" name="flights[${i}][subclass]" class="form-control" placeholder="K" maxlength="5" value="${f.subclass ?? ''}">
+                <input type="text" name="flights[${i}][subclass]" class="form-control" placeholder="" maxlength="5" value="${f.subclass ?? ''}">
             </div>
 
             <div class="col-md-5">
@@ -206,7 +206,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">Nama Penumpang</label>
-                <input type="text" name="passengers[${i}][name]" class="form-control" value="${p.name ?? ''}" placeholder="Dina Nirmala Sari" required>
+                <input type="text" name="passengers[${i}][name]" class="form-control" value="${p.name ?? ''}" placeholder="masukkan nama..." required>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Tipe</label>
@@ -214,7 +214,7 @@
             </div>
             <div class="col-md-4">
                 <label class="form-label">No. Identitas (KTP/Paspor)</label>
-                <input type="text" name="passengers[${i}][id_number]" class="form-control" value="${p.id_number ?? ''}" required>
+                <input type="text" name="passengers[${i}][id_number]" placeholder="opsional..." class="form-control" value="${p.id_number ?? ''}">
             </div>
 
             <div class="col-md-4">
@@ -223,7 +223,7 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">Bagasi</label>
-                <input type="text" name="passengers[${i}][baggage]" class="form-control" placeholder="10Kg" value="${p.baggage ?? ''}">
+                <input type="text" name="passengers[${i}][baggage]" class="form-control" placeholder="20Kg / 1PC" value="${p.baggage ?? ''}">
             </div>
         </div>
     </div>`;

@@ -51,12 +51,28 @@
                                     class="btn btn-sm btn-outline-danger" title="Cetak PDF">
                                     <i class="bi bi-file-earmark-pdf"></i>
                                 </a>
+
+                                @if ($booking->lion_air_tracking_url)
+                                    <a href="{{ $booking->lion_air_tracking_url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-info" title="Cek Status Booking Lion Air">
+                                        <i class="bi bi-airplane-engines"></i>
+                                    </a>
+                                @endif
+
+                                <form action="{{ route('travel.bookings.duplicate', $booking) }}" method="POST" class="d-inline"
+                                    onsubmit="return confirm('Duplikat e-ticket dengan PNR {{ $booking->pnr }}? Data penerbangan &amp; penumpang akan disalin ke draft baru.');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Duplikat">
+                                        <i class="bi bi-files"></i>
+                                    </button>
+                                </form>
+
                                 <a href="{{ route('travel.bookings.edit', $booking) }}"
                                     class="btn btn-sm btn-outline-primary" title="Edit">
                                     <i class="bi bi-pencil-square"></i>
                                 </a>
-                                <form action="{{ route('travel.bookings.destroy', $booking) }}" method="POST"
-                                    class="d-inline"
+
+                                <form action="{{ route('travel.bookings.destroy', $booking) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('Hapus e-ticket dengan PNR {{ $booking->pnr }}?');">
                                     @csrf
                                     @method('DELETE')

@@ -23,12 +23,15 @@ class BookingController extends Controller
                 });
         })
             ->withCount(['flights', 'passengers'])
+            ->with([
+                'flights' => fn($q) => $q->orderBy('id')->limit(1)->with('maskapai'),
+                'passengers' => fn($q) => $q->orderBy('id')->limit(1),
+            ])
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
         return view('bookings.index', compact('bookings'));
-        // return view('preview');
     }
 
     /**
@@ -37,7 +40,14 @@ class BookingController extends Controller
     public function create()
     {
         $maskapais = Maskapai::orderBy('name')->get();
-        $wilayahs  = Wilayah::orderBy('city_name')->get();
+        $wilayahs = Wilayah::orderByRaw("
+                        CASE
+                            WHEN code_iata = 'BTJ' THEN 1
+                            WHEN code_iata = 'KNO' THEN 2
+                            WHEN code_iata = 'CGK' THEN 3
+                            ELSE 4
+                        END
+                    ")->orderBy('city_name')->get();
         $booking   = null;
 
         $maskapaiOptions    = $this->buildMaskapaiOptions($maskapais);
@@ -159,6 +169,29 @@ class BookingController extends Controller
         return $pdf->stream($fileName);
     }
 
+    public function duplicate(Booking $booking)
+    {
+        $newBooking = $booking->replicate();
+        $newBooking->issued_date = now();
+        $newBooking->push();
+
+        foreach ($booking->flights as $flight) {
+            $newFlight = $flight->replicate();
+            $newFlight->booking_id = $newBooking->id;
+            $newFlight->save();
+        }
+
+        foreach ($booking->passengers as $passenger) {
+            $newPassenger = $passenger->replicate();
+            $newPassenger->booking_id = $newBooking->id;
+            $newPassenger->save();
+        }
+
+        return redirect()
+            ->route('travel.bookings.edit', $newBooking)
+            ->with('success', 'E-ticket berhasil diduplikat.');
+    }
+
     /**
      * Validasi form booking (dipakai store & update).
      */
@@ -187,7 +220,7 @@ class BookingController extends Controller
             'passengers.*.title'           => 'required|string|max:10',
             'passengers.*.name'            => 'required|string|max:100',
             'passengers.*.type'            => 'required|string|max:20',
-            'passengers.*.id_number'       => 'required|string|max:50',
+            'passengers.*.id_number'       => 'nullable|string|max:50',
             'passengers.*.ticket_number'   => 'required|string|max:50',
             'passengers.*.baggage'         => 'nullable|string|max:20',
         ]);

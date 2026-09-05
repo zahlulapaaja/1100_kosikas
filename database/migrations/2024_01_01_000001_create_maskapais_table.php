@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('code_iata', 10)->unique();
             $table->string('code_icao', 10)->unique();
+            $table->string('group')->nullable();
             $table->string('logo')->nullable();
             $table->timestamps();
         });

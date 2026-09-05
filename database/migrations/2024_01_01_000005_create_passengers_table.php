@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('title', 10)->default('Mr.');
             $table->string('name', 100);
             $table->string('type', 20)->default('Adult');
-            $table->string('id_number', 50);
+            $table->string('id_number', 50)->nullable();
             $table->string('ticket_number', 50);
             $table->string('baggage', 20)->nullable();
             $table->timestamps();
