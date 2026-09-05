@@ -14,10 +14,42 @@
             box-sizing: border-box;
         }
 
-        /* DejaVu Sans is dompdf's bundled Unicode font — using Helvetica/Arial
-           here silently drops arrows, bullets and other symbols to "?". */
+        @php
+            // Font loading, 3 tiers, most-reliable first:
+            // 1. Self-hosted local file (public/fonts/) — fastest, no external dependency.
+            // 2. Online Google Font, fetched from Google's permanent GitHub font
+            //    archive — needs 'enable_remote' => true in config/dompdf.php AND
+            //    the rendering server to have outbound internet access.
+            // 3. DejaVu Sans — dompdf's bundled Unicode font, always available.
+            //    (Helvetica/Arial are NOT Unicode-safe: arrows/bullets silently
+            //    become "?" — that's why they're avoided here.)
+            $localFontRegular = public_path('fonts/Poppins-Regular.ttf');
+            $localFontBold = public_path('fonts/Poppins-Bold.ttf');
+            $localFontsAvailable = file_exists($localFontRegular) && file_exists($localFontBold);
+
+            $remoteFontRegular = 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Regular.ttf';
+            $remoteFontBold = 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Bold.ttf';
+
+            $fontRegularSrc = $localFontsAvailable ? $localFontRegular : $remoteFontRegular;
+            $fontBoldSrc = $localFontsAvailable ? $localFontBold : $remoteFontBold;
+        @endphp
+
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: normal;
+            src: url('{{ $fontRegularSrc }}');
+        }
+
+        @font-face {
+            font-family: 'Poppins';
+            font-weight: bold;
+            src: url('{{ $fontBoldSrc }}');
+        }
+
         body {
-            font-family: "DejaVu Sans", "Helvetica", "Arial", sans-serif;
+            /* If Poppins fails to load for any reason, this stack falls back
+               to DejaVu Sans automatically — text stays readable either way. */
+            font-family: 'Poppins', 'DejaVu Sans', sans-serif;
             font-size: 11px;
             color: #23303f;
             margin: 0;
@@ -34,13 +66,13 @@
         }
 
         .page {
-            padding: 32px 40px 90px 40px;
+            padding: 32px 40px 100px 40px;
         }
 
-        /* ===== Palette =====
-           Blue    #1E5FA8  primary accent (cards, headings)
-           Navy    #10233F  dark text / footer
-           Orange  #E1521E  single deliberate highlight (pill, total, transit)
+        /* ===== Palette — sampled directly from the Kosikas logo =====
+           Blue    #2E75B6  primary accent (cards, headings, plane/cabin icon)
+           Navy    #16324F  dark text / footer
+           Orange  #E2502F  single deliberate highlight (PNR, price, checked-bag icon)
         */
 
         /* ===== Top bar ===== */
@@ -51,7 +83,7 @@
 
         .eticket-pill {
             display: inline-block;
-            background-color: #E1521E;
+            background-color: #E2502F;
             color: #ffffff;
             font-size: 10px;
             font-weight: bold;
@@ -61,14 +93,14 @@
 
         .booking-code-label {
             font-size: 11px;
-            color: #445266;
+            color: #5b6b80;
             margin-left: 8px;
         }
 
         .booking-code-value {
             font-size: 11px;
             font-weight: bold;
-            color: #10233F;
+            color: #16324F;
             letter-spacing: .5px;
         }
 
@@ -79,21 +111,48 @@
         }
 
         .logo-img {
-            width: 160px;
+            width: 125px;
             height: auto;
         }
 
         .top-rule {
             border-bottom: 1px solid #e5e8ee;
-            margin: 14px 0 22px 0;
+            margin: 14px 0 18px 0;
+        }
+
+        /* ===== PNR highlight (inside content, not just header) ===== */
+        .pnr-highlight {
+            background-color: #FDEEE8;
+            border: 1px solid #f6d6c8;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+        }
+
+        .pnr-highlight table {
+            width: 100%;
+        }
+
+        .pnr-highlight-label {
+            font-size: 9px;
+            color: #9a5138;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .pnr-highlight-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #E2502F;
+            letter-spacing: 2px;
         }
 
         /* ===== Section title ===== */
         .section-title {
             font-size: 13px;
             font-weight: bold;
-            color: #10233F;
-            margin: 24px 0 10px 0;
+            color: #16324F;
+            margin: 22px 0 10px 0;
         }
 
         .section-title:first-of-type {
@@ -105,26 +164,17 @@
             color: #7a8699;
         }
 
+        .icon-inline {
+            vertical-align: -2px;
+            margin-right: 4px;
+        }
+
         /* ===== Flight card ===== */
         .segment-card {
             border: 1px solid #e5e8ee;
             border-radius: 8px;
             margin-bottom: 12px;
             overflow: hidden;
-        }
-
-        .segment-head {
-            background-color: #1E5FA8;
-            color: #ffffff;
-            padding: 9px 14px;
-            font-size: 10.5px;
-            font-weight: bold;
-        }
-
-        .segment-head .segment-duration {
-            float: right;
-            font-weight: normal;
-            color: #cfe0f3;
         }
 
         .segment-body {
@@ -138,7 +188,7 @@
         .leg-time {
             font-size: 19px;
             font-weight: bold;
-            color: #10233F;
+            color: #16324F;
         }
 
         .leg-date {
@@ -165,25 +215,38 @@
         .airline-box {
             background-color: #F2F6FB;
             border-radius: 6px;
-            padding: 10px 12px;
+            padding: 12px;
             text-align: center;
+        }
+
+        .airline-logo-circle {
+            display: inline-block;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 1px solid #dfe6ee;
+            text-align: center;
+            line-height: 32px;
+            overflow: hidden;
         }
 
         .airline-logo-img {
-            width: 26px;
-            height: 26px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
-        .airline-badge {
+        .airline-badge-text {
             display: inline-block;
-            width: 26px;
-            height: 26px;
-            background-color: #1E5FA8;
+            width: 34px;
+            height: 34px;
+            line-height: 34px;
+            background-color: #2E75B6;
             color: #ffffff;
             border-radius: 50%;
-            text-align: center;
-            line-height: 26px;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: bold;
         }
 
@@ -191,12 +254,27 @@
             font-size: 10px;
             font-weight: bold;
             color: #23303f;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
-        .airline-flightno {
-            font-size: 8.5px;
+        .flightno-label {
+            font-size: 7.5px;
+            color: #9aa6b5;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            margin-top: 6px;
+        }
+
+        .flightno-value {
+            font-size: 11px;
+            font-weight: bold;
+            color: #2E75B6;
+        }
+
+        .flightno-class {
+            font-size: 8px;
             color: #7a8699;
+            margin-top: 1px;
         }
 
         .transit-banner {
@@ -238,7 +316,7 @@
 
         .passenger-name {
             font-weight: bold;
-            color: #10233F;
+            color: #16324F;
         }
 
         /* ===== Baggage box ===== */
@@ -257,7 +335,7 @@
         .baggage-head .bname {
             font-size: 10px;
             font-weight: bold;
-            color: #10233F;
+            color: #16324F;
         }
 
         .baggage-head .btype {
@@ -267,7 +345,16 @@
         }
 
         .baggage-row {
+            width: 100%;
+        }
+
+        .baggage-cell {
+            width: 50%;
             padding: 10px 12px;
+        }
+
+        .baggage-cell + .baggage-cell {
+            border-left: 1px solid #eef1f5;
         }
 
         .baggage-label {
@@ -276,15 +363,44 @@
         }
 
         .baggage-value {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: bold;
             color: #23303f;
+            margin-top: 2px;
         }
 
-        .baggage-note {
-            font-size: 8px;
-            color: #9aa6b5;
-            margin-top: 2px;
+        /* ===== Important notes ===== */
+        .notes-box {
+            border: 1px solid #e5e8ee;
+            border-left: 3px solid #E2502F;
+            background-color: #fbfcfe;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+        }
+
+        .notes-box ul {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .notes-box li {
+            font-size: 9.5px;
+            color: #445266;
+            margin-bottom: 5px;
+            padding-left: 14px;
+            position: relative;
+        }
+
+        .notes-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .notes-star {
+            position: absolute;
+            left: 0;
+            color: #E2502F;
         }
 
         /* ===== Fare ===== */
@@ -311,15 +427,8 @@
         .fare-value {
             font-size: 19px;
             font-weight: bold;
-            color: #E1521E;
+            color: #E2502F;
             text-align: right;
-        }
-
-        .note-line {
-            font-size: 8.5px;
-            color: #9aa6b5;
-            text-align: center;
-            margin-top: 24px;
         }
 
         /* ===== Footer ===== */
@@ -339,16 +448,13 @@
         .footer-bar td {
             font-size: 8.5px;
             color: #7a8699;
+            line-height: 1.5;
         }
 
         .footer-company {
             font-size: 9.5px;
             font-weight: bold;
-            color: #10233F;
-        }
-
-        .footer-contact {
-            margin-top: 3px;
+            color: #16324F;
         }
     </style>
 </head>
@@ -378,12 +484,29 @@
                     @if ($logoExists)
                         <img src="{{ $logoPath }}" class="logo-img">
                     @else
-                        <strong style="font-size:15px; color:#10233F;">{{ strtoupper($booking->agency_name) }}</strong>
+                        <strong style="font-size:14px; color:#16324F;">{{ strtoupper($booking->agency_name) }}</strong>
                     @endif
                 </td>
             </tr>
         </table>
         <div class="top-rule"></div>
+
+        {{-- PNR highlighted inside the content, not just the header --}}
+        <div class="pnr-highlight">
+            <table>
+                <tr>
+                    <td>
+                        <div class="pnr-highlight-label">Booking Reference / PNR</div>
+                        <div class="pnr-highlight-value">{{ strtoupper($booking->pnr) }}</div>
+                    </td>
+                    <td style="text-align:right; vertical-align:middle;">
+                        <span style="font-size:9px; color:#9a5138;">
+                            Tunjukkan kode ini saat check-in
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         {{-- Flight Details --}}
         @php
@@ -438,23 +561,21 @@
 
                 $airlineCode = $flight->maskapai->code_iata ?? '';
 
-                // Prefer the actual uploaded logo (any extension, stored in maskapai->logo).
-                // Fall back to guessing a .png at the old naming convention for maskapai
-                // rows that haven't been re-saved through the upload form yet.
-if (!empty($flight->maskapai->logo) && file_exists(public_path($flight->maskapai->logo))) {
-    $airlineLogoPath = public_path($flight->maskapai->logo);
-    $airlineLogoExists = true;
-} else {
-    $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
-    $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
-}
+                if (!empty($flight->maskapai->logo) && file_exists(public_path($flight->maskapai->logo))) {
+                    $airlineLogoPath = public_path($flight->maskapai->logo);
+                    $airlineLogoExists = true;
+                } else {
+                    $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
+                    $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
+                }
 
-$originCode = $flight->origin->code_iata ?? '';
-$destCode = $flight->destination->code_iata ?? '';
+                $originCode = $flight->origin->code_iata ?? '';
+                $destCode = $flight->destination->code_iata ?? '';
             @endphp
 
             @if ($isNewCard)
                 <p class="section-title">
+                    <svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24"><path fill="#2E75B6" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
                     {{ $flightCount > 1 ? 'Penerbangan ' . ($i + 1) : 'Detail Penerbangan' }}
                     <span class="section-sub">&middot; {{ $flight->origin->city_name }} &rarr;
                         {{ $flight->destination->city_name }}</span>
@@ -494,18 +615,25 @@ $destCode = $flight->destination->code_iata ?? '';
                                     </td>
                                 </tr>
                             </table>
+                            @if ($durationLabel)
+                                <div style="margin-top:10px; font-size:9px; color:#7a8699;">
+                                    Durasi terbang: <strong style="color:#16324F;">{{ $durationLabel }}</strong>
+                                </div>
+                            @endif
                         </td>
                         <td style="width:34%;">
                             <div class="airline-box">
-                                @if ($airlineLogoExists)
-                                    <img src="{{ $airlineLogoPath }}" class="airline-logo-img">
-                                @else
-                                    <span
-                                        class="airline-badge">{{ strtoupper(substr($airlineCode ?: $flight->maskapai->name, 0, 2)) }}</span>
-                                @endif
+                                <span class="airline-logo-circle">
+                                    @if ($airlineLogoExists)
+                                        <img src="{{ $airlineLogoPath }}" class="airline-logo-img">
+                                    @else
+                                        <span class="airline-badge-text">{{ strtoupper(substr($airlineCode ?: $flight->maskapai->name, 0, 2)) }}</span>
+                                    @endif
+                                </span>
                                 <div class="airline-name">{{ $flight->maskapai->name }}</div>
-                                <div class="airline-flightno">{{ $airlineCode }} {{ $flight->flight_no }} &middot;
-                                    {{ strtoupper($flight->subclass) ?: 'Y' }} Economy</div>
+                                <div class="flightno-label">No. Penerbangan</div>
+                                <div class="flightno-value">{{ $airlineCode }} {{ $flight->flight_no }}</div>
+                                <div class="flightno-class">{{ strtoupper($flight->subclass) ?: 'Y' }} &middot; Economy</div>
                             </div>
                         </td>
                     </tr>
@@ -520,69 +648,98 @@ $destCode = $flight->destination->code_iata ?? '';
                     @endif
                 </div>
             @else
-    </div> {{-- close .segment-card --}}
-    @endif
+                </div> {{-- close .segment-card --}}
+            @endif
 
-    @php $prevConnecting = $isConnecting; @endphp
-    @endforeach
-
-    {{-- Passenger Details --}}
-    <p class="section-title">Detail Penumpang</p>
-    <table class="ptable">
-        <tr>
-            <th style="width:8%;">No.</th>
-            <th style="width:42%;">Nama</th>
-            <th style="width:20%;">Tipe</th>
-            <th style="width:30%;">No. Tiket</th>
-        </tr>
-        @foreach ($booking->passengers as $i => $p)
-            <tr>
-                <td>{{ $i + 1 }}</td>
-                <td class="passenger-name">{{ $p->title }} {{ $p->name }}</td>
-                <td>{{ $p->type }}</td>
-                <td>{{ $p->ticket_number }}</td>
-            </tr>
+            @php $prevConnecting = $isConnecting; @endphp
         @endforeach
-    </table>
 
-    {{-- Baggage --}}
-    <p class="section-title">Bagasi</p>
-    @foreach ($booking->passengers as $p)
-        <div class="baggage-box">
-            <div class="baggage-head">
-                <span class="bname">{{ $p->title }} {{ $p->name }}</span>
-                <span class="btype">{{ $p->type }}</span>
-            </div>
-            <div class="baggage-row">
-                <div class="baggage-label">Alokasi Bagasi</div>
-                <div class="baggage-value">{{ $p->baggage ?: 'Cabin baggage only' }}</div>
-                @if ($flightCount > 1)
-                    <div class="baggage-note">Berlaku untuk seluruh segmen penerbangan pada booking ini</div>
-                @endif
-            </div>
-        </div>
-    @endforeach
-
-    {{-- Fare --}}
-    <p class="section-title">Rincian Harga</p>
-    <div class="fare-box">
-        <table>
+        {{-- Passenger Details --}}
+        <p class="section-title">Detail Penumpang</p>
+        <table class="ptable">
             <tr>
-                <td>
-                    <div class="fare-label">Total Fare</div>
-                    <div class="fare-note">
-                        {{ $booking->fare_note ?: 'Includes Base Fare, Taxes, Fees and Surcharges' }}</div>
-                </td>
-                <td class="fare-value" style="width:35%;">
-                    {{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}
-                </td>
+                <th style="width:8%;">No.</th>
+                <th style="width:42%;">Nama</th>
+                <th style="width:20%;">Tipe</th>
+                <th style="width:30%;">No. Tiket</th>
             </tr>
+            @foreach ($booking->passengers as $i => $p)
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td class="passenger-name">{{ $p->title }} {{ $p->name }}</td>
+                    <td>{{ $p->type }}</td>
+                    <td>{{ $p->ticket_number }}</td>
+                </tr>
+            @endforeach
         </table>
-    </div>
 
-    <p class="note-line">
-        E-Ticket ini dibuat secara elektronik dan sah tanpa tanda tangan basah &mdash; simpan untuk keperluan check-in.
-    </p>
+        {{-- Baggage --}}
+        <p class="section-title">Bagasi</p>
+        @foreach ($booking->passengers as $p)
+            <div class="baggage-box">
+                <div class="baggage-head">
+                    <span class="bname">{{ $p->title }} {{ $p->name }}</span>
+                    <span class="btype">{{ $p->type }}</span>
+                </div>
+                <table class="baggage-row">
+                    <tr>
+                        <td class="baggage-cell">
+                            <svg class="icon-inline" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="8" width="18" height="12" rx="2"/>
+                                <path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            <span class="baggage-label">Bagasi Kabin (gratis)</span>
+                            <div class="baggage-value">7 Kg &middot; 1 tas</div>
+                        </td>
+                        <td class="baggage-cell">
+                            <svg class="icon-inline" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E2502F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="4" y="7" width="16" height="13" rx="2"/>
+                                <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+                                <line x1="4" y1="12" x2="20" y2="12"/>
+                                <circle cx="9" cy="21" r="1"/>
+                                <circle cx="15" cy="21" r="1"/>
+                            </svg>
+                            <span class="baggage-label">Bagasi Tercatat</span>
+                            <div class="baggage-value">{{ $p->baggage ?: '-' }}</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        @endforeach
+
+        {{-- Fare --}}
+        <p class="section-title">Rincian Harga</p>
+        <div class="fare-box">
+            <table>
+                <tr>
+                    <td>
+                        <div class="fare-label">Total Fare</div>
+                        <div class="fare-note">
+                            {{ $booking->fare_note ?: 'Includes Base Fare, Taxes, Fees and Surcharges' }}</div>
+                    </td>
+                    <td class="fare-value" style="width:35%;">
+                        {{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        {{-- Important Notes --}}
+        {{-- <p class="section-title">
+            <svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E2502F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="11"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            Catatan Penting
+        </p>
+        <div class="notes-box">
+            <ul>
+                <li><span class="notes-star">&#9734;</span> Penumpang wajib membawa dokumen perjalanan yang valid sesuai ketentuan.</li>
+                <li><span class="notes-star">&#9734;</span> Syarat &amp; ketentuan maskapai berlaku setiap saat.</li>
+                <li><span class="notes-star">&#9734;</span> Perubahan jadwal atau pembatalan mengikuti kebijakan maskapai.</li>
+            </ul>
+        </div> --}}
 
     </div>
 
@@ -593,10 +750,11 @@ $destCode = $flight->destination->code_iata ?? '';
                 <td style="width:60%;">
                     <div class="footer-company">{{ strtoupper($booking->agency_name) }}</div>
                     <div>{{ $booking->agency_tagline }}</div>
+                    <div>{{ $booking->agency_address ?? 'Jl. Tgk. H. M Jl. Moh. Daud Beureuh No.50, Kuta Alam, Kec. Kuta Alam, Kota Banda Aceh, Aceh 23121' }}</div>
                 </td>
                 <td style="width:40%; text-align:right;">
                     <div>Email: {{ $booking->agency_email ?? '-' }}</div>
-                    <div class="footer-contact">Telp/WA: {{ $booking->agency_phone ?? '-' }}</div>
+                    <div>Telp/WA: {{ $booking->agency_phone ?? '-' }}</div>
                 </td>
             </tr>
         </table>
