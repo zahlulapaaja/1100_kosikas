@@ -16,13 +16,12 @@
 
         @php
             // Font loading, 3 tiers, most-reliable first:
-            // 1. Self-hosted local file (public/fonts/) — fastest, no external dependency.
-            // 2. Online Google Font, fetched from Google's permanent GitHub font
-            //    archive — needs 'enable_remote' => true in config/dompdf.php AND
-            //    the rendering server to have outbound internet access.
+            // 1. Self-hosted local file (public/fonts/) — fastest, zero external
+            //    dependency, works even with isRemoteEnabled off.
+            // 2. Online Google Font from Google's permanent GitHub archive —
+            //    needs isRemoteEnabled true (set in the controller, see notes)
+            //    AND the rendering server to have outbound internet access.
             // 3. DejaVu Sans — dompdf's bundled Unicode font, always available.
-            //    (Helvetica/Arial are NOT Unicode-safe: arrows/bullets silently
-            //    become "?" — that's why they're avoided here.)
             $localFontRegular = public_path('fonts/Poppins-Regular.ttf');
             $localFontBold = public_path('fonts/Poppins-Bold.ttf');
             $localFontsAvailable = file_exists($localFontRegular) && file_exists($localFontBold);
@@ -30,8 +29,16 @@
             $remoteFontRegular = 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Regular.ttf';
             $remoteFontBold = 'https://raw.githubusercontent.com/google/fonts/main/ofl/poppins/Poppins-Bold.ttf';
 
-            $fontRegularSrc = $localFontsAvailable ? $localFontRegular : $remoteFontRegular;
-            $fontBoldSrc = $localFontsAvailable ? $localFontBold : $remoteFontBold;
+            $fontRegularSrc = str_replace('\\', '/', $localFontsAvailable ? $localFontRegular : $remoteFontRegular);
+            $fontBoldSrc = str_replace('\\', '/', $localFontsAvailable ? $localFontBold : $remoteFontBold);
+
+            // Icons — plain PNG files, NOT inline <svg>. dompdf does not render
+            // inline <svg> markup reliably; <img> to a raster file is the
+            // approach already proven to work in this document (logos).
+            $iconPlane = public_path('images/icons/plane.png');
+            $iconCabin = public_path('images/icons/cabin-bag.png');
+            $iconChecked = public_path('images/icons/checked-bag.png');
+            $iconInfo = public_path('images/icons/info.png');
         @endphp
 
         @font-face {
@@ -47,8 +54,6 @@
         }
 
         body {
-            /* If Poppins fails to load for any reason, this stack falls back
-               to DejaVu Sans automatically — text stays readable either way. */
             font-family: 'Poppins', 'DejaVu Sans', sans-serif;
             font-size: 11px;
             color: #23303f;
@@ -70,12 +75,11 @@
         }
 
         /* ===== Palette — sampled directly from the Kosikas logo =====
-           Blue    #2E75B6  primary accent (cards, headings, plane/cabin icon)
+           Blue    #2E75B6  primary accent
            Navy    #16324F  dark text / footer
-           Orange  #E2502F  single deliberate highlight (PNR, price, checked-bag icon)
+           Orange  #E2502F  single deliberate highlight (PNR, price, checked-bag)
         */
 
-        /* ===== Top bar ===== */
         .top-bar {
             width: 100%;
             margin-bottom: 10px;
@@ -120,7 +124,6 @@
             margin: 14px 0 18px 0;
         }
 
-        /* ===== PNR highlight (inside content, not just header) ===== */
         .pnr-highlight {
             background-color: #FDEEE8;
             border: 1px solid #f6d6c8;
@@ -147,7 +150,6 @@
             letter-spacing: 2px;
         }
 
-        /* ===== Section title ===== */
         .section-title {
             font-size: 13px;
             font-weight: bold;
@@ -165,11 +167,12 @@
         }
 
         .icon-inline {
+            width: 13px;
+            height: 13px;
             vertical-align: -2px;
             margin-right: 4px;
         }
 
-        /* ===== Flight card ===== */
         .segment-card {
             border: 1px solid #e5e8ee;
             border-radius: 8px;
@@ -293,7 +296,6 @@
             color: #c1703f;
         }
 
-        /* ===== Passenger table ===== */
         .ptable {
             width: 100%;
             border: 1px solid #e5e8ee;
@@ -319,7 +321,6 @@
             color: #16324F;
         }
 
-        /* ===== Baggage box ===== */
         .baggage-box {
             border: 1px solid #e5e8ee;
             border-radius: 6px;
@@ -369,7 +370,6 @@
             margin-top: 2px;
         }
 
-        /* ===== Important notes ===== */
         .notes-box {
             border: 1px solid #e5e8ee;
             border-left: 3px solid #E2502F;
@@ -388,9 +388,10 @@
         .notes-box li {
             font-size: 9.5px;
             color: #445266;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
             padding-left: 14px;
             position: relative;
+            line-height: 1.5;
         }
 
         .notes-box li:last-child {
@@ -403,7 +404,6 @@
             color: #E2502F;
         }
 
-        /* ===== Fare ===== */
         .fare-box {
             border: 1px solid #e5e8ee;
             border-radius: 6px;
@@ -431,7 +431,6 @@
             text-align: right;
         }
 
-        /* ===== Footer ===== */
         .footer-bar {
             position: fixed;
             bottom: 0;
@@ -455,6 +454,13 @@
             font-size: 9.5px;
             font-weight: bold;
             color: #16324F;
+            line-height: 1.2;
+            margin-bottom: 0;
+        }
+ 
+        .footer-tagline {
+            line-height: 1.2;
+            margin-top: 0;
         }
     </style>
 </head>
@@ -473,10 +479,10 @@
             <tr>
                 <td style="width:60%;">
                     <span class="eticket-pill">E-TICKET</span>
-                    <span class="booking-code-label">Booking Code</span>
+                    <span class="booking-code-label">Kode Booking</span>
                     <span class="booking-code-value">{{ strtoupper($booking->pnr) }}</span>
                     <div class="top-bar-date">
-                        Issued {{ $booking->issued_date->translatedFormat('d M Y') }}
+                        Diterbitkan {{ $booking->issued_date->translatedFormat('d M Y') }}
                         &nbsp;&middot;&nbsp; Dicetak {{ now()->translatedFormat('d M Y, H:i') }} WIB
                     </div>
                 </td>
@@ -491,17 +497,18 @@
         </table>
         <div class="top-rule"></div>
 
-        {{-- PNR highlighted inside the content, not just the header --}}
+        {{-- PNR highlighted inside the content — kept bilingual since this is
+             the one instruction a passenger really can't afford to miss. --}}
         <div class="pnr-highlight">
             <table>
                 <tr>
                     <td>
-                        <div class="pnr-highlight-label">Booking Reference / PNR</div>
+                        <div class="pnr-highlight-label">Kode Booking (PNR)</div>
                         <div class="pnr-highlight-value">{{ strtoupper($booking->pnr) }}</div>
                     </td>
                     <td style="text-align:right; vertical-align:middle;">
                         <span style="font-size:9px; color:#9a5138;">
-                            Tunjukkan kode ini saat check-in
+                            Tunjukkan kode ini saat check-in<br>Show this code at check-in
                         </span>
                     </td>
                 </tr>
@@ -530,8 +537,6 @@
                     $durationLabel = null;
                 }
 
-                // Detect a same-airport connection to the next flight (true layover, not a
-                // separate return leg days later), to show a transit banner instead of a new card.
                 $nextFlight = $booking->flights->get($i + 1);
                 $isConnecting = false;
                 $layoverLabel = null;
@@ -575,7 +580,9 @@
 
             @if ($isNewCard)
                 <p class="section-title">
-                    <svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24"><path fill="#2E75B6" d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+                    @if (file_exists($iconPlane))
+                        <img src="{{ $iconPlane }}" class="icon-inline">
+                    @endif
                     {{ $flightCount > 1 ? 'Penerbangan ' . ($i + 1) : 'Detail Penerbangan' }}
                     <span class="section-sub">&middot; {{ $flight->origin->city_name }} &rarr;
                         {{ $flight->destination->city_name }}</span>
@@ -684,21 +691,16 @@
                 <table class="baggage-row">
                     <tr>
                         <td class="baggage-cell">
-                            <svg class="icon-inline" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2E75B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="8" width="18" height="12" rx="2"/>
-                                <path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-                            </svg>
+                            @if (file_exists($iconCabin))
+                                <img src="{{ $iconCabin }}" class="icon-inline">
+                            @endif
                             <span class="baggage-label">Bagasi Kabin (gratis)</span>
                             <div class="baggage-value">7 Kg &middot; 1 tas</div>
                         </td>
                         <td class="baggage-cell">
-                            <svg class="icon-inline" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E2502F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="4" y="7" width="16" height="13" rx="2"/>
-                                <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
-                                <line x1="4" y1="12" x2="20" y2="12"/>
-                                <circle cx="9" cy="21" r="1"/>
-                                <circle cx="15" cy="21" r="1"/>
-                            </svg>
+                            @if (file_exists($iconChecked))
+                                <img src="{{ $iconChecked }}" class="icon-inline">
+                            @endif
                             <span class="baggage-label">Bagasi Tercatat</span>
                             <div class="baggage-value">{{ $p->baggage ?: '-' }}</div>
                         </td>
@@ -713,9 +715,9 @@
             <table>
                 <tr>
                     <td>
-                        <div class="fare-label">Total Fare</div>
+                        <div class="fare-label">Total Tarif</div>
                         <div class="fare-note">
-                            {{ $booking->fare_note ?: 'Includes Base Fare, Taxes, Fees and Surcharges' }}</div>
+                            {{ $booking->fare_note ?: 'Termasuk Tarif Dasar, Pajak & Biaya Lainnya' }}</div>
                     </td>
                     <td class="fare-value" style="width:35%;">
                         {{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}
@@ -724,23 +726,6 @@
             </table>
         </div>
 
-        {{-- Important Notes --}}
-        {{-- <p class="section-title">
-            <svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E2502F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="16" x2="12" y2="11"/>
-                <line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-            Catatan Penting
-        </p>
-        <div class="notes-box">
-            <ul>
-                <li><span class="notes-star">&#9734;</span> Penumpang wajib membawa dokumen perjalanan yang valid sesuai ketentuan.</li>
-                <li><span class="notes-star">&#9734;</span> Syarat &amp; ketentuan maskapai berlaku setiap saat.</li>
-                <li><span class="notes-star">&#9734;</span> Perubahan jadwal atau pembatalan mengikuti kebijakan maskapai.</li>
-            </ul>
-        </div> --}}
-
     </div>
 
     {{-- Fixed footer --}}
@@ -748,13 +733,13 @@
         <table>
             <tr>
                 <td style="width:60%;">
-                    <div class="footer-company">{{ strtoupper($booking->agency_name) }}</div>
-                    <div>{{ $booking->agency_tagline }}</div>
+                     <div class="footer-company">{{ strtoupper($booking->agency_name) }}</div>
+                    <div class="footer-tagline">{{ $booking->agency_tagline }}</div>
                     <div>{{ $booking->agency_address ?? 'Jl. Tgk. H. M Jl. Moh. Daud Beureuh No.50, Kuta Alam, Kec. Kuta Alam, Kota Banda Aceh, Aceh 23121' }}</div>
                 </td>
                 <td style="width:40%; text-align:right;">
-                    <div>Email: {{ $booking->agency_email ?? '-' }}</div>
-                    <div>Telp/WA: {{ $booking->agency_phone ?? '-' }}</div>
+                    <div>Email: {{ $booking->agency_email ?? 'kosikas.travel@gmail.com' }}</div>
+                    <div>Telp/WA: {{ $booking->agency_phone ?? '0897-9846-945' }}</div>
                 </td>
             </tr>
         </table>
