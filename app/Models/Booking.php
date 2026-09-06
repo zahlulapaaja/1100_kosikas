@@ -59,4 +59,27 @@ class Booking extends Model
             'FlightDate'   => \Carbon\Carbon::parse($flight->departure_date)->format('dMY'), // 02Sep2026
         ]);
     }
+
+    public function getGarudaTrackingUrlAttribute(): ?string
+    {
+        $flight = $this->flights->first();
+        $passenger = $this->passengers->first();
+
+        if (!$flight || !$passenger || !$flight->maskapai) {
+            return null;
+        }
+
+        // Khusus Garuda Indonesia (GA), bukan anggota grup lain (mis. Citilink/QG)
+        if (strtoupper($flight->maskapai->code_iata) !== 'GA') {
+            return null;
+        }
+
+        $nameParts = explode(' ', trim($passenger->name), 2);
+        $surname   = $nameParts[1] ?? $nameParts[0];
+
+        return 'https://www.garuda-indonesia.com/id/id/booking-details?' . http_build_query([
+            'bookingCode' => $this->pnr,
+            'lastName'    => $surname,
+        ]);
+    }
 }

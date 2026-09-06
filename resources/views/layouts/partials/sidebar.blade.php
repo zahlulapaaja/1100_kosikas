@@ -32,9 +32,9 @@
                 <i class="bi bi-speedometer2"></i><span>Dashboard</span>
             </a>
 
-            <a href="{{ $ktRoute('travel.bookings.create') }}"
-                class="kt-nav-link {{ $ktActive('travel.bookings.create') }}">
-                <i class="bi bi-ticket-perforated"></i><span>Pesan Tiket</span>
+            <a href="{{ $ktRoute('travel.penerbangan.index') }}"
+                class="kt-nav-link {{ $ktActive('travel.penerbangan.index') }}">
+                <i class="bi bi-ticket-perforated"></i><span>Daftar Penerbangan</span>
             </a>
 
             <a href="{{ $ktRoute('travel.bookings.index') }}"
@@ -42,10 +42,6 @@
                 <i class="bi bi-journal-text"></i><span>Daftar Booking</span>
             </a>
 
-            <a href="{{ $ktRoute('travel.bookings.index') }}#generate"
-                class="kt-nav-link {{ $ktActive('travel.bookings.pdf') }}">
-                <i class="bi bi-file-earmark-pdf"></i><span>Generate E-Ticket</span>
-            </a>
 
             <a href="{{ $ktRoute('travel.piutang.index') }}" class="kt-nav-link {{ $ktActive('travel.piutang.*') }}">
                 <i class="bi bi-cash-stack"></i><span>Daftar Piutang</span>

@@ -59,6 +59,13 @@
                                     </a>
                                 @endif
 
+                                @if ($booking->garuda_tracking_url)
+                                    <a href="{{ $booking->garuda_tracking_url }}" target="_blank"
+                                        class="btn btn-sm btn-outline-success" title="Cek Status Booking Garuda Indonesia">
+                                        <i class="bi bi-airplane-engines"></i>
+                                    </a>
+                                @endif
+
                                 <form action="{{ route('travel.bookings.duplicate', $booking) }}" method="POST" class="d-inline"
                                     onsubmit="return confirm('Duplikat e-ticket dengan PNR {{ $booking->pnr }}? Data penerbangan &amp; penumpang akan disalin ke draft baru.');">
                                     @csrf

@@ -28,6 +28,14 @@
         max-width: 160px;
     }
 
+    .btn-swap-wilayah {
+        width: 100%;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
         /* ---------- TEMPLATE GAMBAR (disembunyikan, hanya untuk di-capture) ---------- */
     #ticketTemplate {
         position: fixed;
@@ -187,6 +195,7 @@
         <div class="card-body">
 
             <form method="GET"
+                  id="filterWilayahForm"
                   action="{{ route('travel.penerbangan.index') }}">
 
                 <div class="row g-3 align-items-end">
@@ -199,6 +208,7 @@
                         </label>
 
                         <select name="wilayah_asal_id"
+                                id="wilayahAsalSelect"
                                 class="form-select"
                                 required>
 
@@ -223,6 +233,24 @@
 
                     </div>
 
+                    {{-- Tombol Tukar Wilayah --}}
+                    <div class="col-md-1 text-center">
+
+                        <label class="form-label fw-semibold d-none d-md-block">
+                            &nbsp;
+                        </label>
+
+                        <button type="button"
+                                class="btn btn-outline-secondary btn-swap-wilayah"
+                                title="Tukar Asal &amp; Tujuan"
+                                onclick="tukarWilayah()">
+
+                            <i class="bi bi-arrow-left-right"></i>
+
+                        </button>
+
+                    </div>
+
                     {{-- Tujuan --}}
                     <div class="col-md-4">
 
@@ -231,6 +259,7 @@
                         </label>
 
                         <select name="wilayah_tujuan_id"
+                                id="wilayahTujuanSelect"
                                 class="form-select"
                                 required>
 
@@ -270,11 +299,10 @@
 
                     </div>
 
-                    <div class="col-md-2">
+                    <div class="col-md-1">
 
                         <button class="btn btn-primary w-100">
                             <i class="bi bi-search"></i>
-                            Tampilkan
                         </button>
 
                     </div>
@@ -404,6 +432,52 @@
 
                 @if ($jadwals->count())
 
+                    {{-- Toolbar Filter Maskapai & Rentang Waktu --}}
+                    <div class="p-3 border-bottom bg-light">
+
+                        <div class="row g-2 align-items-end">
+
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold mb-1">
+                                    Filter Maskapai
+                                </label>
+
+                                <select id="filterMaskapai" class="form-select form-select-sm" onchange="filterJadwal()">
+                                    <option value="">Semua Maskapai</option>
+
+                                    @foreach ($jadwals->pluck('maskapai')->filter()->unique('id')->sortBy('name') as $mk)
+                                        <option value="{{ $mk->id }}">{{ $mk->name }} ({{ $mk->code_iata }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold mb-1">
+                                    Filter Rentang Waktu Berangkat
+                                </label>
+
+                                <select id="filterWaktu" class="form-select form-select-sm" onchange="filterJadwal()">
+                                    <option value="">Semua Waktu</option>
+                                    <option value="00:00-05:59">Dini Hari (00:00 - 05:59)</option>
+                                    <option value="06:00-11:59">Pagi (06:00 - 11:59)</option>
+                                    <option value="12:00-14:59">Siang (12:00 - 14:59)</option>
+                                    <option value="15:00-17:59">Sore (15:00 - 17:59)</option>
+                                    <option value="18:00-23:59">Malam (18:00 - 23:59)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary w-100" onclick="resetFilterJadwal()">
+                                    <i class="bi bi-x-circle"></i> Reset
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div class="small text-muted mt-2" id="filterInfoText"></div>
+
+                    </div>
+
                     <div class="table-responsive">
 
                         <table class="table table-hover mb-0">
@@ -412,7 +486,17 @@
 
                                 <tr>
 
-                                    <th class="px-4">
+                                    <th class="px-4" style="width: 40px;">
+
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               id="checkAllMaskapai"
+                                               checked
+                                               onchange="toggleAllJadwal(this)">
+
+                                    </th>
+
+                                    <th>
                                         Maskapai
                                     </th>
 
@@ -470,12 +554,22 @@
                                     <tr class="jadwal-row"
                                         data-maskapai="{{ $jadwal->maskapai->name }}"
                                         data-kode="{{ $jadwal->maskapai->code_iata }}"
+                                        data-maskapai-id="{{ $jadwal->maskapai_id }}"
                                         data-logo="{{ $logoPath }}"
                                         data-berangkat="{{ $berangkat->format('H:i') }}"
                                         data-tiba="{{ $sampai->format('H:i') }}"
                                         data-durasi="{{ $jam }}j {{ $sisa }}m">
 
                                         <td class="px-4">
+
+                                            <input type="checkbox"
+                                                   class="form-check-input jadwal-checkbox"
+                                                   checked
+                                                   onchange="syncCheckAllState()">
+
+                                        </td>
+
+                                        <td>
 
                                             <div class="d-flex align-items-center gap-2">
 
@@ -636,7 +730,7 @@
             </div>
 
             <div class="kt-img-footer">
-                Kosikas Travel &middot; Harga dapat berubah sewaktu-waktu &middot; Dibuat {{ now()->format('d/m/Y H:i') }}
+                Kosikas Travel &middot; Teman Setia Perjalanan Anda &middot; Dibuat {{ now()->format('d/m/Y H:i') }}
             </div>
 
         </div>
@@ -677,6 +771,100 @@
         return `${hariNama[d.getDay()]}, ${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
     }
 
+    // Ubah jam "HH:MM" jadi total menit, untuk perbandingan rentang waktu
+    function parseMenit(waktuStr) {
+        const [h, m] = waktuStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    // Filter baris jadwal berdasarkan maskapai & rentang waktu berangkat
+    function filterJadwal() {
+        const maskapaiFilter = document.getElementById('filterMaskapai').value;
+        const waktuFilter = document.getElementById('filterWaktu').value;
+
+        let rentang = null;
+        if (waktuFilter) {
+            const [dari, sampai] = waktuFilter.split('-');
+            rentang = { dari: parseMenit(dari), sampai: parseMenit(sampai) };
+        }
+
+        let tampil = 0;
+        const semuaRow = document.querySelectorAll('.jadwal-row');
+
+        semuaRow.forEach(function (row) {
+            const maskapaiId = row.dataset.maskapaiId;
+            const berangkatMenit = parseMenit(row.dataset.berangkat);
+
+            const cocokMaskapai = !maskapaiFilter || maskapaiId === maskapaiFilter;
+            const cocokWaktu = !rentang || (berangkatMenit >= rentang.dari && berangkatMenit <= rentang.sampai);
+
+            const checkbox = row.querySelector('.jadwal-checkbox');
+
+            if (cocokMaskapai && cocokWaktu) {
+                row.classList.remove('d-none');
+                tampil++;
+            } else {
+                row.classList.add('d-none');
+                // Baris yang tersembunyi otomatis di-uncheck supaya tidak ikut ke gambar
+                if (checkbox) checkbox.checked = false;
+            }
+        });
+
+        syncCheckAllState();
+
+        const info = document.getElementById('filterInfoText');
+        if (info) {
+            info.textContent = `Menampilkan ${tampil} dari ${semuaRow.length} jadwal`;
+        }
+    }
+
+    // Reset kedua filter dan tampilkan semua baris kembali
+    function resetFilterJadwal() {
+        document.getElementById('filterMaskapai').value = '';
+        document.getElementById('filterWaktu').value = '';
+
+        document.querySelectorAll('.jadwal-row').forEach(function (row) {
+            row.classList.remove('d-none');
+            const checkbox = row.querySelector('.jadwal-checkbox');
+            if (checkbox) checkbox.checked = true;
+        });
+
+        syncCheckAllState();
+
+        const info = document.getElementById('filterInfoText');
+        if (info) info.textContent = '';
+    }
+
+    // Centang / hapus centang semua baris jadwal yang sedang terlihat
+    function toggleAllJadwal(source) {
+        document.querySelectorAll('.jadwal-row:not(.d-none) .jadwal-checkbox').forEach(function (cb) {
+            cb.checked = source.checked;
+        });
+    }
+
+    // Jika salah satu baris di-uncheck manual, sinkronkan status "pilih semua" (hanya baris terlihat)
+    function syncCheckAllState() {
+        const semua = document.querySelectorAll('.jadwal-row:not(.d-none) .jadwal-checkbox');
+        const dicentang = document.querySelectorAll('.jadwal-row:not(.d-none) .jadwal-checkbox:checked');
+        const checkAll = document.getElementById('checkAllMaskapai');
+
+        if (checkAll) {
+            checkAll.checked = semua.length > 0 && dicentang.length === semua.length;
+        }
+    }
+
+    // Tukar wilayah asal <-> tujuan lalu submit ulang filter
+    function tukarWilayah() {
+        const asalSelect = document.getElementById('wilayahAsalSelect');
+        const tujuanSelect = document.getElementById('wilayahTujuanSelect');
+
+        const temp = asalSelect.value;
+        asalSelect.value = tujuanSelect.value;
+        tujuanSelect.value = temp;
+
+        document.getElementById('filterWilayahForm').submit();
+    }
+
     function generateGambarPenerbangan() {
 
         const tanggalInput = document.getElementById('tanggalPenerbangan').value;
@@ -688,8 +876,18 @@
         bodyContainer.innerHTML = '';
 
         let adaHargaKosong = false;
+        let adaBarisTercentang = false;
 
         rows.forEach(function (row) {
+
+            const checkbox = row.querySelector('.jadwal-checkbox');
+
+            // Lewati baris yang tidak dicentang (termasuk yang sedang difilter/disembunyikan)
+            if (!checkbox || !checkbox.checked) {
+                return;
+            }
+
+            adaBarisTercentang = true;
 
             const maskapai = row.dataset.maskapai;
             const kode = row.dataset.kode;
@@ -742,6 +940,11 @@
             `);
 
         });
+
+        if (!adaBarisTercentang) {
+            alert('Pilih minimal satu penerbangan (centang) untuk digenerate ke gambar.');
+            return;
+        }
 
         if (adaHargaKosong) {
             const lanjut = confirm('Ada penerbangan yang belum diisi harga. Lanjutkan generate gambar?');
