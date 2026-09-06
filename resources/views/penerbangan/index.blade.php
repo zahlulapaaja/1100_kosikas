@@ -177,6 +177,18 @@
         color: #808A9C;
         text-align: center;
     }
+
+    .kt-img-header-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .kt-img-logo {
+        max-height: 34px;
+        width: auto;
+        display: block;
+    }
 </style>
 
 <div class="container-fluid">
@@ -697,8 +709,17 @@
 
             <div class="kt-img-header">
 
-                <div class="kt-img-brand">
-                    KOSIKAS <span>TRAVEL</span>
+               <div class="kt-img-header-top">
+
+                    <div class="kt-img-brand">
+                        KOSIKAS <span>TRAVEL</span>
+                    </div>
+
+                    <img src="{{ asset('images/kosikas-logo.png') }}"
+                        class="kt-img-logo"
+                        crossorigin="anonymous"
+                        alt="Kosikas Travel">
+
                 </div>
 
                 <div class="kt-img-route">
