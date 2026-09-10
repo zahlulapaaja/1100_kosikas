@@ -123,7 +123,7 @@
 
 @endsection
 
-@section('scripts')
+@push('scripts')
     <script>
         const maskapaiList = @json($maskapaiOptions);
         const wilayahList = @json($wilayahOptions);
@@ -263,4 +263,4 @@
             addPassenger();
         }
     </script>
-@endsection
+@endpush

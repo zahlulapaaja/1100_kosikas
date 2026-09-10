@@ -42,6 +42,11 @@
                 <i class="bi bi-journal-text"></i><span>Daftar Booking</span>
             </a>
 
+            <a href="{{ $ktRoute('travel.invoices.index') }}"
+                class="kt-nav-link {{ $ktActive('travel.invoices.index', 'travel.invoices.show') }}">
+                <i class="bi bi-journal-text"></i><span>Daftar Invoices</span>
+            </a>
+
 
             <a href="{{ $ktRoute('travel.piutang.index') }}" class="kt-nav-link {{ $ktActive('travel.piutang.*') }}">
                 <i class="bi bi-cash-stack"></i><span>Daftar Piutang</span>

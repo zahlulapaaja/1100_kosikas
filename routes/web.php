@@ -4,6 +4,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MaskapaiController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PenerbanganController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +29,5 @@ Route::name('travel.')->group(function () {
     Route::resource('maskapai', MaskapaiController::class)->except(['show']);
     Route::resource('wilayah', WilayahController::class)->except(['show']);
     Route::resource('penerbangan', PenerbanganController::class)->except(['show']);
+    Route::resource('invoices', InvoiceController::class)->except(['create']);
 });

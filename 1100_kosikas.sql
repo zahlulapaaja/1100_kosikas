@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 06, 2026 at 02:23 PM
+-- Generation Time: Sep 10, 2026 at 02:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,7 +50,10 @@ INSERT INTO `bookings` (`id`, `agency_name`, `agency_tagline`, `pnr`, `issued_da
 (3, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'EEMPFD', '2026-09-05', 'IDR', 2092160.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-05 14:37:43', '2026-09-05 14:37:43'),
 (4, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'EGY59J', '2026-09-05', 'IDR', 2092160.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-05 14:49:49', '2026-09-05 14:51:19'),
 (6, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'HMFEFG', '2026-09-05', 'IDR', 2598300.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-05 15:04:57', '2026-09-05 15:04:57'),
-(7, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'PYMWVK', '2026-09-05', 'IDR', 2517221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-05 15:30:15', '2026-09-05 15:31:48');
+(7, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'PYMWVK', '2026-09-05', 'IDR', 2517221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-05 15:30:15', '2026-09-05 15:31:48'),
+(8, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'D5H3D3', '2026-09-08', 'IDR', 2710460.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-09 23:20:21', '2026-09-09 23:20:21'),
+(9, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'UQPQYM', '2026-09-08', 'IDR', 2447221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-09 23:24:23', '2026-09-09 23:24:23'),
+(10, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'PYMWVK', '2026-09-08', 'IDR', 2517221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-09-09 23:26:31', '2026-09-09 23:26:31');
 
 -- --------------------------------------------------------
 
@@ -124,7 +127,76 @@ INSERT INTO `flights` (`id`, `booking_id`, `maskapai_id`, `origin_wilayah_id`, `
 (5, 3, 2, 1, 2, '0141', '2026-09-08', '11:05', '14:05', 'L', '2026-09-05 14:37:43', '2026-09-05 14:37:43'),
 (8, 4, 2, 1, 2, '0141', '2026-09-08', '11:05', '14:05', 'L', '2026-09-05 14:51:19', '2026-09-05 14:51:19'),
 (11, 6, 6, 2, 1, '6898', '2026-09-13', '15:15', '18:00', 'L', '2026-09-05 15:29:55', '2026-09-05 15:29:55'),
-(14, 7, 8, 2, 1, '342', '2026-09-12', '08:35', '11:25', 'V', '2026-09-05 15:35:02', '2026-09-05 15:35:02');
+(14, 7, 8, 2, 1, '342', '2026-09-12', '08:35', '11:25', 'V', '2026-09-05 15:35:02', '2026-09-05 15:35:02'),
+(15, 8, 2, 1, 2, '0141', '2026-09-10', '11:05', '14:05', 'S', '2026-09-09 23:20:21', '2026-09-09 23:20:21'),
+(16, 9, 8, 1, 2, '343', '2026-09-10', '12:10', '15:05', 'V', '2026-09-09 23:24:23', '2026-09-09 23:24:23'),
+(18, 10, 8, 2, 1, '342', '2026-09-14', '08:35', '11:25', 'V', '2026-09-10 10:44:34', '2026-09-10 10:44:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_code` varchar(255) DEFAULT NULL,
+  `issued_date` date NOT NULL,
+  `orderer_name` varchar(255) DEFAULT NULL,
+  `orderer_address` varchar(255) DEFAULT NULL,
+  `orderer_phone` varchar(255) DEFAULT NULL,
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_account_number` varchar(255) DEFAULT NULL,
+  `bank_account_holder` varchar(255) DEFAULT NULL,
+  `signer_name` varchar(255) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `invoices`
+--
+
+INSERT INTO `invoices` (`id`, `invoice_code`, `issued_date`, `orderer_name`, `orderer_address`, `orderer_phone`, `bank_name`, `bank_account_number`, `bank_account_holder`, `signer_name`, `notes`, `created_at`, `updated_at`) VALUES
+(1, 'P20260910DA', '2026-09-10', 'Darwis Abubakar', 'Jl. Tgk. H. M Jl. Moh. Daud Beureuh No.50, Kuta Alam, Kec. Kuta Alam, Kota Banda Aceh, Aceh 23121', '0899', NULL, NULL, NULL, NULL, NULL, '2026-09-10 10:36:48', '2026-09-10 10:40:23'),
+(2, 'P20260910DA', '2026-09-10', 'Darwis Abubakar', 'Kota Banda Aceh', '0823-2005-9200', NULL, NULL, NULL, NULL, NULL, '2026-09-10 10:44:38', '2026-09-10 12:22:49'),
+(3, NULL, '2026-09-10', 'Darwis Abubakar', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-09-10 11:03:27', '2026-09-10 11:03:27');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoice_items`
+--
+
+CREATE TABLE `invoice_items` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `invoice_id` bigint(20) UNSIGNED NOT NULL,
+  `booking_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `type` enum('flight','extra') NOT NULL DEFAULT 'flight',
+  `passenger_name` varchar(255) DEFAULT NULL,
+  `maskapai_name` varchar(255) DEFAULT NULL,
+  `route_text` varchar(255) DEFAULT NULL,
+  `flight_date_text` varchar(255) DEFAULT NULL,
+  `label` varchar(255) DEFAULT NULL,
+  `amount` decimal(15,2) NOT NULL DEFAULT 0.00,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `invoice_items`
+--
+
+INSERT INTO `invoice_items` (`id`, `invoice_id`, `booking_id`, `type`, `passenger_name`, `maskapai_name`, `route_text`, `flight_date_text`, `label`, `amount`, `sort_order`, `created_at`, `updated_at`) VALUES
+(1, 1, 10, 'flight', 'Darwis Abubakar', 'Pelita Air', 'BTJ-CGK', '10 Sep 2026', NULL, 2517221.00, 0, '2026-09-10 10:36:48', '2026-09-10 10:36:48'),
+(2, 1, 9, 'flight', 'Darwis Abubakar', 'Pelita Air', 'BTJ-CGK', '10 Sep 2026', NULL, 2447221.00, 1, '2026-09-10 10:36:48', '2026-09-10 10:36:48'),
+(6, 1, NULL, 'extra', NULL, NULL, NULL, NULL, 'reschedule', 90000.00, 2, '2026-09-10 10:40:50', '2026-09-10 10:40:50'),
+(7, 2, 10, 'flight', 'Darwis Abubakar', 'Pelita Air', 'CGK-BTJ', '14 Sep 2026', NULL, 2517221.00, 0, '2026-09-10 10:44:38', '2026-09-10 10:44:38'),
+(8, 2, 9, 'flight', 'Darwis Abubakar', 'Pelita Air', 'BTJ-CGK', '10 Sep 2026', NULL, 2447221.00, 1, '2026-09-10 10:44:39', '2026-09-10 10:44:39'),
+(9, 3, 10, 'flight', 'Darwis Abubakar', 'Pelita Air', 'CGK-BTJ', '14 Sep 2026', NULL, 2517221.00, 0, '2026-09-10 11:03:27', '2026-09-10 11:03:27'),
+(10, 3, 9, 'flight', 'Darwis Abubakar', 'Pelita Air', 'BTJ-CGK', '10 Sep 2026', NULL, 2447221.00, 1, '2026-09-10 11:03:27', '2026-09-10 11:03:27');
 
 -- --------------------------------------------------------
 
@@ -222,7 +294,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (6, '2024_01_01_000003_create_bookings_table', 1),
 (7, '2024_01_01_000004_create_flights_table', 1),
 (8, '2024_01_01_000005_create_passengers_table', 1),
-(9, '2024_01_01_000006_create_penerbangans_table', 2);
+(9, '2024_01_01_000006_create_penerbangans_table', 2),
+(10, '2026_09_10_171424_create_invoices_tables', 3);
 
 -- --------------------------------------------------------
 
@@ -253,7 +326,10 @@ INSERT INTO `passengers` (`id`, `booking_id`, `title`, `name`, `type`, `id_numbe
 (4, 3, 'Mr.', 'Adrian Devano', 'Adult', '11', '126 2144619493', '1PC', '2026-09-05 14:37:43', '2026-09-05 14:37:43'),
 (7, 4, 'Mr.', 'Darwis Abubakar', 'Adult', '11', '126 2144619494', '1PC', '2026-09-05 14:51:19', '2026-09-05 14:51:19'),
 (9, 6, 'Mr.', 'Adrian Devano', 'Adult', NULL, '938 2116675243', '20Kg', '2026-09-05 15:29:55', '2026-09-05 15:29:55'),
-(12, 7, 'Mr.', 'Darwis Abubakar', 'Adult', NULL, '7783008904896C1', '20Kg', '2026-09-05 15:35:03', '2026-09-05 15:35:03');
+(12, 7, 'Mr.', 'Darwis Abubakar', 'Adult', NULL, '7783008904896C1', '20Kg', '2026-09-05 15:35:03', '2026-09-05 15:35:03'),
+(13, 8, 'Mr.', 'Adrian Devano', 'Adult', NULL, '126 2144619495', '1PC', '2026-09-09 23:20:21', '2026-09-09 23:20:21'),
+(14, 9, 'Mr.', 'Darwis Abubakar', 'Adult', NULL, '3008915992', '20Kg', '2026-09-09 23:24:23', '2026-09-09 23:24:23'),
+(16, 10, 'Mr.', 'Darwis Abubakar', 'Adult', NULL, '3008904896', '20Kg', '2026-09-10 10:44:34', '2026-09-10 10:44:34');
 
 -- --------------------------------------------------------
 
@@ -399,8 +475,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('jg0v8DLMWlJz5S6tZLCsdtAEe5mtMjVolkndTbCb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZWZRN1ZvUDB4cDVnVjhQUnk5bDhERkNYMHlVV1hKM3Q2S01uYjFEYSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6OTA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9wZW5lcmJhbmdhbj90YW5nZ2FsPTIwMjYtMDktMDYmd2lsYXlhaF9hc2FsX2lkPTQmd2lsYXlhaF90dWp1YW5faWQ9MSI7czo1OiJyb3V0ZSI7czoyNDoidHJhdmVsLnBlbmVyYmFuZ2FuLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1788697364),
-('uAS0FPRNuGU3wmihPulfrbnDFsoMzs2wUgnA4bu5', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQzE4WEptUU9PdEFoVnRaZ0VMYkdhNHU5ZkVtY1FVZHRWbjh5VGJvYSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ib29raW5ncyI7czo1OiJyb3V0ZSI7czoyMToidHJhdmVsLmJvb2tpbmdzLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1788692372);
+('pC5Y6r9DsmgQnuZhHlVi4AKXwHftlaNfTe24oSxs', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTENHZjhBWjdjQndtNTQ2NmRqdnlVTGhDRzlTU1B4SUNLVnhZTXFHdSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjE6e2k6MDtzOjc6InN1Y2Nlc3MiO31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7czo3OiJzdWNjZXNzIjtzOjYxOiJCZXJoYXNpbCBtYXN1ay4gU2VsYW1hdCBkYXRhbmcga2VtYmFsaSwgQWRtaW4gS29zaWthcyBUcmF2ZWwhIjt9', 1789036931),
+('PKU7gvDzT14uI3NRXhmzRj1Hr7y7qn85snaBpvkz', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoia3J4MkVSWmRrMXpkdm5iWGt2cWwxaFBCbTFwTkQwYzczVlNUUmdIMCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ib29raW5ncy84L3BkZiI7czo1OiJyb3V0ZSI7czoxOToidHJhdmVsLmJvb2tpbmdzLnBkZiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjE7fQ==', 1788996751),
+('t2fTK8BnFKlsnWciJO7sEOVEtAGjlL8NUoV0zPGj', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiQ0dpM1VwZWFWeFRQOWlWM1l1bXgyZUplYmZlN1Y0YlJVTVlGS2o5MCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ib29raW5ncyI7czo1OiJyb3V0ZSI7czoyMToidHJhdmVsLmJvb2tpbmdzLmluZGV4Ijt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1789044646);
 
 -- --------------------------------------------------------
 
@@ -511,6 +588,20 @@ ALTER TABLE `flights`
   ADD KEY `flights_destination_wilayah_id_foreign` (`destination_wilayah_id`);
 
 --
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `invoice_items_invoice_id_foreign` (`invoice_id`),
+  ADD KEY `invoice_items_booking_id_foreign` (`booking_id`);
+
+--
 -- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
@@ -590,7 +681,7 @@ ALTER TABLE `wilayahs`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -602,7 +693,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -620,13 +723,13 @@ ALTER TABLE `maskapais`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `penerbangans`
@@ -658,6 +761,13 @@ ALTER TABLE `flights`
   ADD CONSTRAINT `flights_destination_wilayah_id_foreign` FOREIGN KEY (`destination_wilayah_id`) REFERENCES `wilayahs` (`id`),
   ADD CONSTRAINT `flights_maskapai_id_foreign` FOREIGN KEY (`maskapai_id`) REFERENCES `maskapais` (`id`),
   ADD CONSTRAINT `flights_origin_wilayah_id_foreign` FOREIGN KEY (`origin_wilayah_id`) REFERENCES `wilayahs` (`id`);
+
+--
+-- Constraints for table `invoice_items`
+--
+ALTER TABLE `invoice_items`
+  ADD CONSTRAINT `invoice_items_booking_id_foreign` FOREIGN KEY (`booking_id`) REFERENCES `bookings` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `invoice_items_invoice_id_foreign` FOREIGN KEY (`invoice_id`) REFERENCES `invoices` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `passengers`
