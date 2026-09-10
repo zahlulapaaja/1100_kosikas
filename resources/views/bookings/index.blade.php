@@ -65,11 +65,6 @@
                             <td>{{ $booking->passengers_count }}</td>
                             <td>{{ $booking->currency }} {{ number_format($booking->total_fare, 0, ',', '.') }}</td>
                             <td class="text-end">
-                                <a href="{{ route('travel.bookings.pdf', $booking) }}" target="_blank"
-                                    class="btn btn-sm btn-outline-danger" title="Cetak PDF">
-                                    <i class="bi bi-file-earmark-pdf"></i>
-                                </a>
-
                                 @if ($booking->lion_air_tracking_url)
                                     <a href="{{ $booking->lion_air_tracking_url }}" target="_blank"
                                         class="btn btn-sm btn-outline-info" title="Cek Status Booking Lion Air">
@@ -83,6 +78,11 @@
                                         <i class="bi bi-airplane-engines"></i>
                                     </a>
                                 @endif
+
+                                <a href="{{ route('travel.bookings.pdf', $booking) }}" target="_blank"
+                                    class="btn btn-sm btn-outline-danger" title="Cetak PDF">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
 
                                 <form action="{{ route('travel.bookings.duplicate', $booking) }}" method="POST"
                                     class="d-inline"
