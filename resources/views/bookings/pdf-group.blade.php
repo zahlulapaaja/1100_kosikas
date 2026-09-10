@@ -307,13 +307,18 @@
             color: #5b6b80;
             font-size: 9px;
             text-align: left;
-            padding: 8px 12px;
+            padding: 8px 10px;
         }
 
         .ptable td {
-            padding: 9px 12px;
-            font-size: 10.5px;
+            padding: 9px 10px;
+            font-size: 10px;
             border-top: 1px solid #eef1f5;
+        }
+
+        .ptable .col-baggage {
+            text-align: right;
+            white-space: nowrap;
         }
 
         .passenger-name {
@@ -321,53 +326,10 @@
             color: #16324F;
         }
 
-        .baggage-box {
-            border: 1px solid #e5e8ee;
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
-
-        .baggage-head {
-            background-color: #F2F6FB;
-            padding: 8px 12px;
-        }
-
-        .baggage-head .bname {
-            font-size: 10px;
-            font-weight: bold;
-            color: #16324F;
-        }
-
-        .baggage-head .btype {
-            float: right;
-            font-size: 8.5px;
-            color: #7a8699;
-        }
-
-        .baggage-row {
-            width: 100%;
-        }
-
-        .baggage-cell {
-            width: 50%;
-            padding: 10px 12px;
-        }
-
-        .baggage-cell + .baggage-cell {
-            border-left: 1px solid #eef1f5;
-        }
-
-        .baggage-label {
+        .ptable-footnote {
             font-size: 8.5px;
             color: #9aa6b5;
-        }
-
-        .baggage-value {
-            font-size: 10.5px;
-            font-weight: bold;
-            color: #23303f;
-            margin-top: 2px;
+            margin-top: 6px;
         }
 
         .notes-box {
@@ -661,14 +623,18 @@
             @php $prevConnecting = $isConnecting; @endphp
         @endforeach
 
-        {{-- Passenger Details --}}
+        {{-- Passenger Details — versi rombongan: bagasi digabung sebagai
+             kolom paling ujung, bukan box terpisah per orang seperti versi
+             perorangan (pdf.blade.php), supaya tetap ringkas untuk daftar
+             penumpang yang panjang. --}}
         <p class="section-title">Detail Penumpang</p>
         <table class="ptable">
             <tr>
-                <th style="width:8%;">No.</th>
-                <th style="width:42%;">Nama</th>
-                <th style="width:20%;">Tipe</th>
-                <th style="width:30%;">No. Tiket</th>
+                <th style="width:6%;">No.</th>
+                <th style="width:30%;">Nama</th>
+                <th style="width:12%;">Tipe</th>
+                <th style="width:24%;">No. Tiket</th>
+                <th style="width:28%; text-align:right;">Bagasi Tercatat</th>
             </tr>
             @foreach ($booking->passengers as $i => $p)
                 <tr>
@@ -676,38 +642,13 @@
                     <td class="passenger-name">{{ strtoupper($p->title) }} {{ strtoupper($p->name) }}</td>
                     <td>{{ $p->type }}</td>
                     <td>{{ $p->ticket_number }}</td>
+                    <td class="col-baggage">{{ $p->baggage ?: '-' }}</td>
                 </tr>
             @endforeach
         </table>
-
-        {{-- Baggage --}}
-        <p class="section-title">Bagasi</p>
-        @foreach ($booking->passengers as $p)
-            <div class="baggage-box">
-                <div class="baggage-head">
-                    <span class="bname">{{ $p->title }} {{ $p->name }}</span>
-                    <span class="btype">{{ $p->type }}</span>
-                </div>
-                <table class="baggage-row">
-                    <tr>
-                        <td class="baggage-cell">
-                            @if (file_exists($iconCabin))
-                                <img src="{{ $iconCabin }}" class="icon-inline">
-                            @endif
-                            <span class="baggage-label">Bagasi Kabin (gratis)</span>
-                            <div class="baggage-value">7 Kg &middot; 1 tas</div>
-                        </td>
-                        <td class="baggage-cell">
-                            @if (file_exists($iconChecked))
-                                <img src="{{ $iconChecked }}" class="icon-inline">
-                            @endif
-                            <span class="baggage-label">Bagasi Tercatat</span>
-                            <div class="baggage-value">{{ $p->baggage ?: '-' }}</div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        @endforeach
+        <div class="ptable-footnote">
+            * Setiap penumpang mendapat bagasi kabin gratis 7 Kg / 1 tas. Bagasi tercatat sesuai kolom di atas.
+        </div>
 
         {{-- Fare --}}
         <p class="section-title">Rincian Harga</p>

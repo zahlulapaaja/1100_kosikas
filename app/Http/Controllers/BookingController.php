@@ -162,11 +162,35 @@ class BookingController extends Controller
     {
         $booking->load(['flights.maskapai', 'flights.origin', 'flights.destination', 'passengers']);
 
-        $pdf = Pdf::loadView('bookings.pdf', compact('booking'))->setPaper('a4', 'portrait');
+        $isGroup = $booking->passengers->count() > 1;
+        $view = $isGroup ? 'bookings.pdf-group' : 'bookings.pdf';
 
-        $fileName = 'eticket-' . $booking->pnr . '.pdf';
+        $pdf = Pdf::loadView($view, compact('booking'))->setPaper('a4', 'portrait');
 
-        return $pdf->stream($fileName);
+        return $pdf->stream($this->buildEticketFileName($booking));
+    }
+
+    private function buildEticketFileName(Booking $booking): string
+    {
+        $firstFlight = $booking->flights->first();
+        $lastFlight = $booking->flights->last();
+
+        // "2SEP" — hari tanpa nol di depan + singkatan bulan
+        $dateLabel = strtoupper($firstFlight->departure_date->format('jM'));
+
+        // "BTJ-KNO" — asal flight pertama ke tujuan flight terakhir
+        $originCode = $firstFlight->origin->code_iata ?? '';
+        $destCode = $lastFlight->destination->code_iata ?? '';
+        $routeLabel = "{$originCode}-{$destCode}";
+
+        // "MuhammadRidha" (atau "MuhammadRidhaDkk" kalau rombongan)
+        $leadPassenger = $booking->passengers->first();
+        $nameLabel = preg_replace('/[^A-Za-z0-9]/', '', $leadPassenger->name ?? 'Penumpang');
+        if ($booking->passengers->count() > 1) {
+            $nameLabel .= 'Dkk';
+        }
+
+        return "{$dateLabel}_{$routeLabel}_{$nameLabel}.pdf";
     }
 
     public function duplicate(Booking $booking)
