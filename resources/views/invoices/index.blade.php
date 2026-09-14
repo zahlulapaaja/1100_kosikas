@@ -6,9 +6,33 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="section-title mb-0"><i class="bi bi-receipt me-2"></i>Daftar Invoice</h4>
-        <a href="{{ route('travel.bookings.index') }}" class="btn btn-success">
-            <i class="bi bi-plus-lg me-1"></i>Buat dari Daftar E-Ticket
-        </a>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#hotelInvoiceModal">
+                <i class="bi bi-building me-1"></i>Buat Invoice Hotel
+            </button>
+            <a href="{{ route('travel.bookings.index') }}" class="btn btn-success">
+                <i class="bi bi-plus-lg me-1"></i>Buat dari Daftar E-Ticket
+            </a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="hotelInvoiceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="{{ route('travel.invoices.create-hotel') }}" method="POST" class="modal-content">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Invoice Hotel Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="form-label">Nama Pemesan</label>
+                    <input type="text" name="orderer_name" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning">Lanjut Isi Data Hotel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="card card-section mb-3">

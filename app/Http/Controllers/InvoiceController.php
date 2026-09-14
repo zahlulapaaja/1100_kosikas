@@ -95,7 +95,18 @@ class InvoiceController extends Controller
     {
         $invoice->load('items');
 
-        return view('invoices.form', compact('invoice'));
+        $existingHotelsJson = json_encode(
+            $invoice->hotelItems->map(fn($h) => [
+                'guest_name'     => $h->passenger_name,
+                'hotel_name'     => $h->hotel_name,
+                'hotel_location' => $h->hotel_location,
+                'checkin_date'   => optional($h->checkin_date)->format('Y-m-d'),
+                'checkout_date'  => optional($h->checkout_date)->format('Y-m-d'),
+                'amount'         => $h->amount,
+            ])->values()
+        );
+
+        return view('invoices.form', compact('invoice', 'existingHotelsJson'));
     }
 
     /**
@@ -115,6 +126,14 @@ class InvoiceController extends Controller
             'extras'                 => 'nullable|array',
             'extras.*.label'         => 'required_with:extras|string|max:150',
             'extras.*.amount'        => 'required_with:extras|numeric', // boleh negatif
+
+            'hotels'                   => 'nullable|array',
+            'hotels.*.guest_name'      => 'required_with:hotels|string|max:100',
+            'hotels.*.hotel_name'      => 'required_with:hotels|string|max:150',
+            'hotels.*.hotel_location'  => 'nullable|string|max:150',
+            'hotels.*.checkin_date'    => 'required_with:hotels|date',
+            'hotels.*.checkout_date'   => 'nullable|date|after_or_equal:hotels.*.checkin_date',
+            'hotels.*.amount'          => 'required_with:hotels|numeric',
         ]);
 
         DB::transaction(function () use ($invoice, $data) {
@@ -130,15 +149,32 @@ class InvoiceController extends Controller
 
             // ganti seluruh item 'extra' dengan yang baru dikirim
             $invoice->extraItems()->delete();
+            $invoice->hotelItems()->delete();
 
-            $flightCount = $invoice->flightItems()->count();
+            $baseSort = $invoice->flightItems()->count();
+
+            foreach (($data['hotels'] ?? []) as $i => $hotel) {
+                InvoiceItem::create([
+                    'invoice_id'      => $invoice->id,
+                    'type'            => 'hotel',
+                    'passenger_name'  => $hotel['guest_name'],
+                    'hotel_name'      => $hotel['hotel_name'],
+                    'hotel_location'  => $hotel['hotel_location'] ?? null,
+                    'checkin_date'    => $hotel['checkin_date'],
+                    'checkout_date'   => $hotel['checkout_date'] ?? $hotel['checkin_date'],
+                    'amount'          => $hotel['amount'],
+                    'sort_order'      => $baseSort + $i,
+                ]);
+            }
+
+            $flightAndHotelCount = $baseSort + count($data['hotels'] ?? []);
             foreach (($data['extras'] ?? []) as $i => $extra) {
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'type'       => 'extra',
                     'label'      => $extra['label'],
                     'amount'     => $extra['amount'],
-                    'sort_order' => $flightCount + $i,
+                    'sort_order' => $flightAndHotelCount + $i,
                 ]);
             }
 
@@ -190,6 +226,27 @@ class InvoiceController extends Controller
             $initials = mb_strtoupper(mb_substr($parts[0], 0, 1) . mb_substr(end($parts), 0, 1));
         }
 
-        return 'P' . $date . $initials;
+        // P = ada tiket pesawat, H = hotel-only (tanpa tiket sama sekali)
+        $prefix = $invoice->flightItems()->exists() ? 'P' : 'H';
+
+        return $prefix . $date . $initials;
+    }
+
+    /**
+     * Buat invoice hotel baru (kosong, input manual — tanpa sumber booking).
+     */
+    public function createHotel(Request $request)
+    {
+        $data = $request->validate([
+            'orderer_name' => 'required|string|max:100',
+        ]);
+
+        $invoice = Invoice::create([
+            'issued_date'  => now(),
+            'orderer_name' => $data['orderer_name'],
+        ]);
+
+        return redirect()->route('travel.invoices.edit', $invoice)
+            ->with('success', 'Invoice hotel berhasil dibuat. Silakan lengkapi data hotel di bawah.');
     }
 }

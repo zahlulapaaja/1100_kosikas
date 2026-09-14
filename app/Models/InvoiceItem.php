@@ -20,10 +20,18 @@ class InvoiceItem extends Model
         'label',
         'amount',
         'sort_order',
+
+        // Hotel
+        'hotel_name',
+        'hotel_location',
+        'checkin_date',
+        'checkout_date',
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount'        => 'decimal:2',
+        'checkin_date'  => 'date',
+        'checkout_date' => 'date',
     ];
 
     public function invoice()
@@ -34,5 +42,21 @@ class InvoiceItem extends Model
     public function booking()
     {
         return $this->belongsTo(Booking::class);
+    }
+
+    /**
+     * "10 Sep 2026 - 12 Sep 2026" atau "10 Sep 2026" kalau checkin = checkout.
+     */
+    public function getHotelDateRangeTextAttribute(): string
+    {
+        if (!$this->checkin_date) {
+            return '-';
+        }
+
+        if (!$this->checkout_date || $this->checkin_date->isSameDay($this->checkout_date)) {
+            return $this->checkin_date->translatedFormat('d M Y');
+        }
+
+        return $this->checkin_date->translatedFormat('d M Y') . ' - ' . $this->checkout_date->translatedFormat('d M Y');
     }
 }

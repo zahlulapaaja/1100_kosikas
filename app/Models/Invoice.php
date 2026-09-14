@@ -36,6 +36,11 @@ class Invoice extends Model
         return $this->items()->where('type', 'flight');
     }
 
+    public function hotelItems()
+    {
+        return $this->items()->where('type', 'hotel');
+    }
+
     public function extraItems()
     {
         return $this->items()->where('type', 'extra');
@@ -67,19 +72,22 @@ class Invoice extends Model
         return $this->flightItems->sortBy(function ($item) use ($monthMap) {
             $firstDatePart = trim(explode('/', $item->flight_date_text ?? '')[0] ?? '');
 
-            // Cocokkan pola "10 Sep 2026"
             if (preg_match('/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/u', $firstDatePart, $m)) {
                 $day   = (int) $m[1];
                 $month = $monthMap[mb_strtolower($m[2])] ?? null;
                 $year  = (int) $m[3];
 
                 if ($month) {
-                    return sprintf('%04d-%02d-%02d', $year, $month, $day); // "2026-09-10" -> bisa diurutkan sebagai string
+                    return sprintf('%04d-%02d-%02d', $year, $month, $day);
                 }
             }
 
-            // Format tak dikenali -> taruh di akhir
             return '9999-99-99';
         })->values();
+    }
+
+    public function getSortedHotelItemsAttribute()
+    {
+        return $this->hotelItems->sortBy(fn($item) => $item->checkin_date?->format('Y-m-d') ?? '9999-99-99')->values();
     }
 }

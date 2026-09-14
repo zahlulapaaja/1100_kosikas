@@ -30,4 +30,5 @@ Route::name('travel.')->group(function () {
     Route::resource('wilayah', WilayahController::class)->except(['show']);
     Route::resource('penerbangan', PenerbanganController::class)->except(['show']);
     Route::resource('invoices', InvoiceController::class)->except(['create']);
+    Route::post('invoices/create-hotel', [InvoiceController::class, 'createHotel'])->name('invoices.create-hotel');
 });

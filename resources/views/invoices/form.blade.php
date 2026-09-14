@@ -77,6 +77,18 @@
             </div>
         </div>
 
+        {{-- Biaya Hotel --}}
+        <div class="card card-section mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="section-title mb-0"><i class="bi bi-building-fill me-2"></i>Data Hotel</h5>
+                    <button type="button" id="addHotel" class="btn btn-sm btn-warning"><i class="bi bi-plus-lg"></i>
+                        Tambah</button>
+                </div>
+                <div id="hotelWrapper"></div>
+            </div>
+        </div>
+
         {{-- Biaya Tambahan --}}
         <div class="card card-section mb-4">
             <div class="card-body">
@@ -133,6 +145,37 @@
 
         if (existingExtras.length) {
             existingExtras.forEach(e => addExtra(e));
+        }
+    </script>
+    <script>
+        const existingHotels = {!! $existingHotelsJson !!};
+        let hotelIndex = 0;
+
+        function hotelTemplate(i, h = {}) {
+            return `
+                <div class="row g-2 mb-2 align-items-center hotel-row" data-hotel-index="${i}">
+                    <div class="col-md-2"><input type="text" name="hotels[${i}][guest_name]" class="form-control" placeholder="Nama" value="${h.guest_name ?? ''}"></div>
+                    <div class="col-md-2"><input type="text" name="hotels[${i}][hotel_name]" class="form-control" placeholder="Nama Hotel" value="${h.hotel_name ?? ''}"></div>
+                    <div class="col-md-2"><input type="text" name="hotels[${i}][hotel_location]" class="form-control" placeholder="Lokasi" value="${h.hotel_location ?? ''}"></div>
+                    <div class="col-md-2"><input type="date" name="hotels[${i}][checkin_date]" class="form-control" value="${h.checkin_date ?? ''}"></div>
+                    <div class="col-md-2"><input type="date" name="hotels[${i}][checkout_date]" class="form-control" value="${h.checkout_date ?? ''}"></div>
+                    <div class="col-md-1"><input type="number" step="0.01" name="hotels[${i}][amount]" class="form-control" placeholder="Harga" value="${h.amount ?? ''}"></div>
+                    <div class="col-md-1"><button type="button" class="btn btn-outline-danger remove-hotel"><i class="bi bi-x-lg"></i></button></div>
+                </div>`;
+        }
+
+        function addHotel(data = {}) {
+            document.getElementById('hotelWrapper').insertAdjacentHTML('beforeend', hotelTemplate(hotelIndex, data));
+            hotelIndex++;
+        }
+
+        document.getElementById('addHotel').addEventListener('click', () => addHotel());
+        document.getElementById('hotelWrapper').addEventListener('click', function(e) {
+            if (e.target.closest('.remove-hotel')) e.target.closest('.hotel-row').remove();
+        });
+
+        if (existingHotels.length) {
+            existingHotels.forEach(h => addHotel(h));
         }
     </script>
 @endpush

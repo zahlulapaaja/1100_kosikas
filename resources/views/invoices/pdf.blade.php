@@ -354,31 +354,62 @@
         </table>
 
         {{-- Tiket Pesawat --}}
-        <p class="section-title">Pemesanan Pesawat</p>
-        <table class="ptable">
-            <tr>
-                <th style="width:6%;">No</th>
-                <th style="width:22%;">Nama Penumpang</th>
-                <th style="width:16%;">Maskapai</th>
-                <th style="width:20%;">Rute</th>
-                <th style="width:16%;">Waktu</th>
-                <th class="num" style="width:20%;">Harga Tiket</th>
-            </tr>
-            @foreach ($invoice->sorted_flight_items as $i => $item)
+        @if ($invoice->flightItems->count())
+            <p class="section-title">Pemesanan Pesawat</p>
+            <table class="ptable">
                 <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td>{{ $item->passenger_name }}</td>
-                    <td>{{ $item->maskapai_name }}</td>
-                    <td>{{ $item->route_text }}</td>
-                    <td>{{ $item->flight_date_text }}</td>
-                    <td class="num">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                    <th style="width:6%;">No</th>
+                    <th style="width:22%;">Nama Penumpang</th>
+                    <th style="width:16%;">Maskapai</th>
+                    <th style="width:20%;">Rute</th>
+                    <th style="width:16%;">Waktu</th>
+                    <th class="num" style="width:20%;">Harga Tiket</th>
                 </tr>
-            @endforeach
-            <tr class="subtotal-row">
-                <td colspan="5">Subtotal Tiket</td>
-                <td class="num">{{ number_format($invoice->flightItems->sum('amount'), 0, ',', '.') }}</td>
-            </tr>
-        </table>
+                @foreach ($invoice->sorted_flight_items as $i => $item)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $item->passenger_name }}</td>
+                        <td>{{ $item->maskapai_name }}</td>
+                        <td>{{ $item->route_text }}</td>
+                        <td>{{ $item->flight_date_text }}</td>
+                        <td class="num">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+                <tr class="subtotal-row">
+                    <td colspan="5">Subtotal Tiket</td>
+                    <td class="num">{{ number_format($invoice->flightItems->sum('amount'), 0, ',', '.') }}</td>
+                </tr>
+            </table>
+        @endif
+
+        {{-- Data Hotel --}}
+        @if ($invoice->hotelItems->count())
+            <p class="section-title">Pemesanan Hotel</p>
+            <table class="ptable">
+                <tr>
+                    <th style="width:6%;">No</th>
+                    <th style="width:18%;">Nama</th>
+                    <th style="width:22%;">Nama Hotel</th>
+                    <th style="width:16%;">Lokasi</th>
+                    <th style="width:18%;">Waktu</th>
+                    <th class="num" style="width:20%;">Harga</th>
+                </tr>
+                @foreach ($invoice->sorted_hotel_items as $i => $item)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $item->passenger_name }}</td>
+                        <td>{{ $item->hotel_name }}</td>
+                        <td>{{ $item->hotel_location ?: '-' }}</td>
+                        <td>{{ $item->hotel_date_range_text }}</td>
+                        <td class="num">{{ number_format($item->amount, 0, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+                <tr class="subtotal-row">
+                    <td colspan="5">Subtotal Hotel</td>
+                    <td class="num">{{ number_format($invoice->hotelItems->sum('amount'), 0, ',', '.') }}</td>
+                </tr>
+            </table>
+        @endif
 
         {{-- Biaya Tambahan --}}
         @if ($invoice->extraItems->count())
