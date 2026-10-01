@@ -4,6 +4,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\MaskapaiController;
 use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\PenerbanganController;
 use Illuminate\Support\Facades\Route;
@@ -31,4 +32,8 @@ Route::name('travel.')->group(function () {
     Route::resource('penerbangan', PenerbanganController::class)->except(['show']);
     Route::resource('invoices', InvoiceController::class)->except(['create']);
     Route::post('invoices/create-hotel', [InvoiceController::class, 'createHotel'])->name('invoices.create-hotel');
+
+    // kalender 
+    Route::get('calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('calendar/events', [CalendarController::class, 'events'])->name('calendar.events');
 });

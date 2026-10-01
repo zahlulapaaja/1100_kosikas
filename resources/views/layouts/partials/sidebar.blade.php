@@ -47,10 +47,15 @@
                 <i class="bi bi-journal-text"></i><span>Daftar Invoices</span>
             </a>
 
-
             <a href="{{ $ktRoute('travel.piutang.index') }}" class="kt-nav-link {{ $ktActive('travel.piutang.*') }}">
                 <i class="bi bi-cash-stack"></i><span>Daftar Piutang</span>
             </a>
+
+            <a href="{{ $ktRoute('travel.calendar.index') }}"
+                class="kt-nav-link {{ $ktActive('travel.calendar.index') }}">
+                <i class="bi bi-calendar-range"></i><span>Kalender</span>
+            </a>
+
 
             <div class="kt-nav-section">Master Data</div>
 
