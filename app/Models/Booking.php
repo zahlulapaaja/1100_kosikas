@@ -47,9 +47,9 @@ class Booking extends Model
             return null;
         }
 
-        $nameParts = explode(' ', trim($passenger->name), 2);
-        $firstName = $nameParts[0];
-        $surname   = $nameParts[1] ?? $nameParts[0];
+        $words     = preg_split('/\s+/', trim($passenger->name));
+        $surname   = count($words) > 1 ? array_pop($words) : $words[0];
+        $firstName = implode(' ', $words);
 
         return 'https://secure2.lionair.co.id/lionairpnr2/RetrieveBooking.aspx?' . http_build_query([
             'BookingReloc' => $this->pnr,
