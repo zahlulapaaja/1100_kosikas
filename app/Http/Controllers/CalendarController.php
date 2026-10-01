@@ -151,7 +151,7 @@ class CalendarController extends Controller
                             ['Jam', $dep ? ($dep . ($arr ? ' - ' . $arr : '')) : 'Belum diisi'],
                             ['Penumpang', $m['passenger']],
                         ],
-                        'url'     => $booking ? route('travel.bookings.edit', $booking) : null,
+                        'url'     => $booking ? route('travel.bookings.pdf', $booking) : null,
                         'urlText' => 'Buka e-ticket',
                     ],
                 ];

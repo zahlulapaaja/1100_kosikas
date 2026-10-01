@@ -118,6 +118,11 @@
                 --k-hotel: #D4411F;
                 --k-urgent: #B42318;
                 --k-urgent-bg: #FEF3F2;
+
+                --c-flight: #D4411F;
+                /* penerbangan = oranye */
+                --c-hotel: #2E75B6;
+                /* hotel = biru */
             }
 
             /* Filter */
@@ -128,11 +133,11 @@
             }
 
             .cal-page .dot-flight {
-                color: var(--k-blue);
+                color: var(--c-flight);
             }
 
             .cal-page .dot-hotel {
-                color: var(--k-hotel);
+                color: var(--c-hotel);
             }
 
             .cal-page .btn-check:checked+.btn .dot-flight,
@@ -192,7 +197,7 @@
             }
 
             .cal-page .next-flight--tomorrow {
-                border-left-color: var(--k-blue);
+                border-left-color: var(--k-navy);
             }
 
             .cal-page .nf-top {
@@ -315,14 +320,14 @@
             }
 
             .cal-page .fc-event.ev-flight {
-                --fc-event-bg-color: var(--k-blue);
-                --fc-event-border-color: var(--k-blue);
+                --fc-event-bg-color: var(--c-flight);
+                --fc-event-border-color: var(--c-flight);
                 --fc-event-text-color: #fff;
             }
 
             .cal-page .fc-event.ev-hotel {
-                --fc-event-bg-color: var(--k-hotel);
-                --fc-event-border-color: var(--k-hotel);
+                --fc-event-bg-color: var(--c-hotel);
+                --fc-event-border-color: var(--c-hotel);
                 --fc-event-text-color: #fff;
             }
 
@@ -363,11 +368,11 @@
             }
 
             .cal-page .detail-head--flight {
-                background: var(--k-blue);
+                background: var(--c-flight);
             }
 
             .cal-page .detail-head--hotel {
-                background: var(--k-hotel);
+                background: var(--c-hotel);
             }
 
             .cal-page .detail-kind {
