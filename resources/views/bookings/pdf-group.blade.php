@@ -690,7 +690,7 @@
                                         <table>
                                             {{-- Berangkat: jam, titik, dan kota dalam satu baris, rata tengah --}}
                                             <tr>
-                                                <td class="v-mid" style="width:38%;">
+                                                <td class="v-mid" style="width:22%;">
                                                     <div class="leg-time">{{ $flight->dep_time }}
                                                         @if ($leg['depTz'])
                                                             <span class="leg-tz">{{ $leg['depTz'] }}</span>
