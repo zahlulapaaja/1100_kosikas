@@ -15,9 +15,10 @@
                 @endforeach
             </ul>
         </div>
+        <div id="formErrors" class="alert alert-danger d-none"></div>
     @endif
 
-    <form action="{{ route('travel.invoices.update', $invoice) }}" method="POST">
+    <form id="invoiceForm" action="{{ route('travel.invoices.update', $invoice) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -26,16 +27,23 @@
             <div class="card-body">
                 <h5 class="section-title mb-3"><i class="bi bi-person-fill me-2"></i>Data Pemesan</h5>
                 <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Nama Pemesan</label>
-                        <input type="text" class="form-control" value="{{ $invoice->orderer_name }}" disabled>
+                    <div class="col-md-3">
+                        <label class="form-label">Kode Invoice</label>
+                        <input type="text" name="invoice_code" class="form-control" maxlength="50"
+                            value="{{ old('invoice_code', $invoice->invoice_code) }}" placeholder="Otomatis jika kosong">
+                        <div class="form-text">Kosong = dibuat otomatis / tetap memakai kode lama.</div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label">Nama Pemesan</label>
+                        <input type="text" name="orderer_name" class="form-control" required
+                            value="{{ old('orderer_name', $invoice->orderer_name) }}">
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label">Alamat</label>
                         <input type="text" name="orderer_address" class="form-control"
                             value="{{ old('orderer_address', $invoice->orderer_address) }}">
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">No. HP</label>
                         <input type="text" name="orderer_phone" class="form-control"
                             value="{{ old('orderer_phone', $invoice->orderer_phone) }}">
@@ -177,5 +185,71 @@
         if (existingHotels.length) {
             existingHotels.forEach(h => addHotel(h));
         }
+    </script>
+    <script>
+        const LIST_URL = "{{ route('travel.invoices.index') }}";
+        const invoiceForm = document.getElementById('invoiceForm');
+
+        function showFormErrors(data) {
+            const box = document.getElementById('formErrors');
+            const msgs = data && data.errors ? Object.values(data.errors).flat() :
+                [(data && data.message) || 'Terjadi kesalahan saat menyimpan.'];
+            const ul = document.createElement('ul');
+            ul.className = 'mb-0';
+            msgs.forEach(m => {
+                const li = document.createElement('li');
+                li.textContent = m;
+                ul.appendChild(li);
+            });
+            box.replaceChildren(ul);
+            box.classList.remove('d-none');
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        invoiceForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = invoiceForm.querySelector('button[type="submit"]');
+
+            // dibuka sinkron saat klik supaya tidak diblokir popup blocker
+            const win = window.open('', '_blank');
+            if (win) {
+                win.document.write('<p style="font-family:sans-serif;padding:24px">Menyimpan invoice…</p>');
+            }
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(invoiceForm.action, {
+                    method: 'POST', // _method=PUT dan _token sudah ada di FormData
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new FormData(invoiceForm),
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.redirect) {
+                    if (win) {
+                        win.location.href = data.redirect; // tab baru: invoice
+                        window.location.href = LIST_URL; // tab awal: daftar invoice
+                    } else {
+                        window.location.href = data.redirect; // popup diblokir: buka di tab ini
+                    }
+                    return;
+                }
+
+                if (win) win.close();
+                showFormErrors(data);
+            } catch (err) {
+                if (win) win.close();
+                showFormErrors({
+                    message: 'Gagal menghubungi server. Coba lagi.'
+                });
+            }
+            btn.disabled = false;
+        });
     </script>
 @endpush

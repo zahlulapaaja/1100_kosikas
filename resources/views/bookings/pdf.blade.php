@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <title>eTicket - {{ $booking->pnr }}</title>
     <style>
+        /* margin bawah 76px = ruang footer, supaya konten halaman 2+ tidak menimpa footer */
         @page {
             size: A4;
-            margin: 0;
+            margin: 32px 0 76px 0;
         }
 
         * {
@@ -71,7 +72,7 @@
         }
 
         .page {
-            padding: 32px 40px 100px 40px;
+            padding: 0 40px;
         }
 
         /* ===== Palette — sampled directly from the Kosikas logo =====
@@ -121,15 +122,15 @@
 
         .top-rule {
             border-bottom: 1px solid #e5e8ee;
-            margin: 14px 0 18px 0;
+            margin: 10px 0 14px 0;
         }
 
         .pnr-highlight {
             background-color: #FDEEE8;
             border: 1px solid #f6d6c8;
             border-radius: 8px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
+            padding: 10px 16px;
+            margin-bottom: 14px;
         }
 
         .pnr-highlight table {
@@ -150,15 +151,17 @@
             letter-spacing: 2px;
         }
 
+        /* Pembungkus tiap section: tidak boleh terpotong, kalau tidak muat pindah halaman */
+        .section {
+            margin-bottom: 16px;
+            page-break-inside: avoid;
+        }
+
         .section-title {
             font-size: 13px;
             font-weight: bold;
             color: #16324F;
-            margin: 22px 0 10px 0;
-        }
-
-        .section-title:first-of-type {
-            margin-top: 0;
+            margin: 0 0 10px 0;
         }
 
         .section-sub {
@@ -176,12 +179,12 @@
         .segment-card {
             border: 1px solid #e5e8ee;
             border-radius: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 0;
             overflow: hidden;
         }
 
         .segment-body {
-            padding: 16px;
+            padding: 12px 16px;
         }
 
         .segment-body table {
@@ -194,6 +197,13 @@
             color: #16324F;
         }
 
+        /* label zona waktu di samping jam */
+        .leg-tz {
+            font-size: 7.5px;
+            font-weight: normal;
+            color: #7a8699;
+        }
+
         .leg-date {
             font-size: 8.5px;
             color: #9aa6b5;
@@ -203,16 +213,30 @@
             font-size: 10.5px;
             font-weight: bold;
             color: #23303f;
-            margin-top: 2px;
         }
 
+        /* titik kecil (7px) */
         .leg-dot {
-            color: #cfd6e0;
-            font-size: 9px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: #2E75B6;
+            margin: 0 auto;
+        }
+
+        /* garis putus-putus penghubung kota atas ke kota bawah */
+        .leg-line {
+            width: 1px;
+            border-left: 1px dashed #8fa5bd;
+            margin: 0 auto;
         }
 
         .leg-connector {
             padding-left: 6px;
+        }
+
+        .v-mid {
+            vertical-align: middle;
         }
 
         .airline-box {
@@ -311,7 +335,7 @@
         }
 
         .ptable td {
-            padding: 9px 12px;
+            padding: 7px 12px;
             font-size: 10.5px;
             border-top: 1px solid #eef1f5;
         }
@@ -351,7 +375,7 @@
 
         .baggage-cell {
             width: 50%;
-            padding: 10px 12px;
+            padding: 8px 12px;
         }
 
         .baggage-cell + .baggage-cell {
@@ -407,7 +431,7 @@
         .fare-box {
             border: 1px solid #e5e8ee;
             border-radius: 6px;
-            padding: 14px 16px;
+            padding: 12px 16px;
         }
 
         .fare-box table {
@@ -431,9 +455,10 @@
             text-align: right;
         }
 
+        /* footer diletakkan di area margin bawah @page */
         .footer-bar {
             position: fixed;
-            bottom: 0;
+            bottom: -76px;
             left: 0;
             right: 0;
             padding: 12px 40px;
@@ -457,7 +482,7 @@
             line-height: 1.2;
             margin-bottom: 0;
         }
- 
+
         .footer-tagline {
             line-height: 1.2;
             margin-top: 0;
@@ -483,7 +508,7 @@
                     <span class="booking-code-value">{{ strtoupper($booking->pnr) }}</span>
                     <div class="top-bar-date">
                         Diterbitkan {{ $booking->issued_date->translatedFormat('d M Y') }}
-                        &nbsp;&middot;&nbsp; Dicetak {{ now()->translatedFormat('d M Y, H:i') }} WIB
+                        &nbsp;&middot;&nbsp; Dicetak {{ now('Asia/Jakarta')->translatedFormat('d M Y, H:i') }} WIB
                     </div>
                 </td>
                 <td style="width:40%; text-align:right;">
@@ -517,213 +542,353 @@
 
         {{-- Flight Details --}}
         @php
-            $flightCount = $booking->flights->count();
-            $prevConnecting = false;
-        @endphp
+            // ===== Helper zona waktu =====
+            $tzMap = [
+                'WIB'  => 'Asia/Jakarta',
+                'WITA' => 'Asia/Makassar',
+                'WIT'  => 'Asia/Jayapura',
+            ];
+            $tzAbbr = [
+                'Asia/Jakarta' => 'WIB', 'Asia/Pontianak' => 'WIB',
+                'Asia/Makassar' => 'WITA', 'Asia/Jayapura' => 'WIT',
+                'Asia/Kuala_Lumpur' => 'MYT', 'Asia/Kuching' => 'MYT',
+                'Asia/Singapore' => 'SGT', 'Asia/Bangkok' => 'ICT', 'Asia/Ho_Chi_Minh' => 'ICT',
+                'Asia/Manila' => 'PHT', 'Asia/Hong_Kong' => 'HKT',
+                'Asia/Tokyo' => 'JST', 'Asia/Seoul' => 'KST',
+                'Asia/Qatar' => 'AST', 'Asia/Riyadh' => 'AST', 'Asia/Dubai' => 'GST',
+                'Asia/Kolkata' => 'IST',
+            ];
+            // cadangan kalau kolom timezone hanya berisi offset (menit => singkatan)
+            $offsetAbbr = [420 => 'WIB', 480 => 'MYT', 180 => 'AST'];
 
-        @foreach ($booking->flights as $i => $flight)
-            @php
-                $durationLabel = null;
+            // Terima model wilayah. Kolom timezone boleh berisi: IANA, WIB/WITA/WIT, "UTC+8", "+08:00", "8".
+            // Kalau kolom kosong dan bandara di Indonesia, zona ditebak dari nama provinsi.
+            $resolveTz = function ($w) use ($tzMap) {
+                $raw = trim((string) ($w->timezone ?? ''));
+                if ($raw === '') {
+                    $country = strtolower(trim((string) ($w->country ?? '')));
+                    $prov = strtolower(trim((string) ($w->province_name ?? '')));
+                    if (in_array($country, ['indonesia', 'id'], true) && $prov !== '') {
+                        if (str_contains($prov, 'papua') || str_contains($prov, 'maluku')) {
+                            return ['id' => 'Asia/Jayapura', 'known' => true];
+                        }
+                        foreach (['bali', 'nusa tenggara', 'sulawesi', 'gorontalo',
+                                  'kalimantan selatan', 'kalimantan timur', 'kalimantan utara'] as $k) {
+                            if (str_contains($prov, $k)) {
+                                return ['id' => 'Asia/Makassar', 'known' => true];
+                            }
+                        }
+                        return ['id' => 'Asia/Jakarta', 'known' => true];
+                    }
+                    return ['id' => 'Asia/Jakarta', 'known' => false];
+                }
+                if (isset($tzMap[strtoupper($raw)])) {
+                    return ['id' => $tzMap[strtoupper($raw)], 'known' => true];
+                }
+                if (preg_match('/^(?:UTC|GMT)?\s*([+-]?)\s*(\d{1,2})(?::?(\d{2}))?$/i', $raw, $m)) {
+                    return ['id' => sprintf('%s%02d:%02d', $m[1] ?: '+', $m[2], $m[3] ?? 0), 'known' => true];
+                }
+                return ['id' => $raw, 'known' => true];
+            };
+
+            // "MYT · UTC+8", "BST · UTC+1", atau "UTC+5:30" kalau singkatan tidak diketahui
+            $tzLabel = function (\Carbon\Carbon $t) use ($tzAbbr, $offsetAbbr) {
+                $min = $t->utcOffset();
+                $abs = abs($min);
+                $utc = 'UTC' . ($min < 0 ? '-' : '+') . intdiv($abs, 60)
+                    . ($abs % 60 ? ':' . sprintf('%02d', $abs % 60) : '');
+
+                $abbr = $tzAbbr[$t->getTimezone()->getName()] ?? null;
+                if (!$abbr) {
+                    $abbr = $t->format('T'); // London -> GMT/BST otomatis (DST)
+                    if (!preg_match('/^[A-Za-z]{2,5}$/', $abbr)) {
+                        $abbr = $offsetAbbr[$min] ?? null;
+                    }
+                }
+                return $abbr ? $abbr . ' · ' . $utc : $utc;
+            };
+
+            // ===== Pre-pass 1: waktu absolut tiap segmen =====
+            $flights = $booking->flights->values();
+            $legs = [];
+            $prevArr = null;
+
+            foreach ($flights as $i => $f) {
+                $o = $resolveTz($f->origin);
+                $d = $resolveTz($f->destination);
+                $leg = [
+                    'dep' => null, 'arr' => null, 'duration' => null,
+                    'depTz' => null, 'arrTz' => null, 'layover_before' => null,
+                ];
                 try {
-                    $dep = \Carbon\Carbon::parse($flight->dep_time);
-                    $arr = \Carbon\Carbon::parse($flight->arr_time);
-                    if ($arr->lessThan($dep)) {
+                    $dep = \Carbon\Carbon::parse($f->departure_date->format('Y-m-d') . ' ' . $f->dep_time, $o['id']);
+
+                    // Pengaman: berangkat "sebelum" tiba segmen sebelumnya (selisih < 24 jam)
+                    // berarti lewat tengah malam -> maju sehari
+                    if ($prevArr && $dep->lt($prevArr) && ($prevArr->timestamp - $dep->timestamp) < 86400) {
+                        $dep->addDay();
+                    }
+
+                    // Jam tiba = jam lokal bandara tujuan, di tanggal lokal tujuan saat berangkat
+                    $arr = $dep->copy()->setTimezone($d['id'])->setTimeFromTimeString($f->arr_time);
+                    if ($arr->lte($dep)) {
                         $arr->addDay();
                     }
-                    $diffH = $dep->diffInHours($arr);
-                    $diffM = $dep->diffInMinutes($arr) % 60;
-                    $durationLabel = sprintf('%dj %02dm', $diffH, $diffM);
-                } catch (\Throwable $e) {
-                    $durationLabel = null;
-                }
 
-                $nextFlight = $booking->flights->get($i + 1);
-                $isConnecting = false;
-                $layoverLabel = null;
-                if ($nextFlight && $nextFlight->origin_wilayah_id === $flight->destination_wilayah_id) {
-                    try {
-                        $arrHere = \Carbon\Carbon::parse(
-                            $flight->departure_date->format('Y-m-d') . ' ' . $flight->arr_time,
-                        );
-                        $depNext = \Carbon\Carbon::parse(
-                            $nextFlight->departure_date->format('Y-m-d') . ' ' . $nextFlight->dep_time,
-                        );
-                        if ($depNext->lessThan($arrHere)) {
-                            $depNext->addDay();
-                        }
-                        $layoverHours = $arrHere->diffInHours($depNext);
-                        if ($layoverHours <= 12) {
-                            $isConnecting = true;
-                            $lm = $arrHere->diffInMinutes($depNext) % 60;
-                            $layoverLabel = sprintf('%dj %02dm', $layoverHours, $lm);
-                        }
-                    } catch (\Throwable $e) {
-                        $isConnecting = false;
+                    $mins = intdiv($arr->timestamp - $dep->timestamp, 60);
+                    $leg['dep'] = $dep;
+                    $leg['arr'] = $arr;
+                    $leg['duration'] = sprintf('%dj %02dm', intdiv($mins, 60), $mins % 60);
+                    $leg['depTz'] = $o['known'] ? $tzLabel($dep) : null;
+                    $leg['arrTz'] = $d['known'] ? $tzLabel($arr) : null;
+                    $prevArr = $arr;
+                } catch (\Throwable $e) {
+                    // biarkan null -> tampilan fallback ke departure_date
+                }
+                $legs[$i] = $leg;
+            }
+
+            // ===== Pre-pass 2: kelompokkan segmen connecting (transit <= 12 jam) =====
+            $groups = [];
+            $g = -1;
+            foreach ($flights as $i => $f) {
+                $connects = false;
+                if ($i > 0 && $legs[$i - 1]['arr'] && $legs[$i]['dep']
+                    && $f->origin_wilayah_id
+                    && $flights[$i - 1]->destination_wilayah_id == $f->origin_wilayah_id) {
+                    $gap = intdiv($legs[$i]['dep']->timestamp - $legs[$i - 1]['arr']->timestamp, 60);
+                    if ($gap >= 0 && $gap <= 12 * 60) {
+                        $connects = true;
+                        $legs[$i]['layover_before'] = sprintf('%dj %02dm', intdiv($gap, 60), $gap % 60);
                     }
                 }
-
-                $isNewCard = $i === 0 || !$prevConnecting;
-
-                $airlineCode = $flight->maskapai->code_iata ?? '';
-
-                if (!empty($flight->maskapai->logo) && file_exists(public_path($flight->maskapai->logo))) {
-                    $airlineLogoPath = public_path($flight->maskapai->logo);
-                    $airlineLogoExists = true;
+                if ($connects) {
+                    $groups[$g][] = $i;
                 } else {
-                    $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
-                    $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
+                    $groups[] = [$i];
+                    $g = count($groups) - 1;
                 }
+            }
+        @endphp
 
-                $originCode = $flight->origin->code_iata ?? '';
-                $destCode = $flight->destination->code_iata ?? '';
+        @foreach ($groups as $gi => $group)
+            @php
+                $firstFlight = $flights[$group[0]];
+                $lastFlight = $flights[end($group)];
             @endphp
 
-            @if ($isNewCard)
+            <div class="section">
                 <p class="section-title">
                     @if (file_exists($iconPlane))
                         <img src="{{ $iconPlane }}" class="icon-inline">
                     @endif
-                    {{ $flightCount > 1 ? 'Penerbangan ' . ($i + 1) : 'Detail Penerbangan' }}
-                    <span class="section-sub">&middot; {{ $flight->origin->city_name }} &rarr;
-                        {{ $flight->destination->city_name }}</span>
+                    {{ count($groups) > 1 ? 'Penerbangan ' . ($gi + 1) : 'Detail Penerbangan' }}
+                    <span class="section-sub">&middot; {{ $firstFlight->origin->city_name }} &rarr;
+                        {{ $lastFlight->destination->city_name }}</span>
                 </p>
-                <div class="segment-card">
-            @endif
 
-            <div class="segment-body" style="{{ !$isNewCard ? 'padding-top:0;' : '' }}">
-                <table>
-                    <tr>
-                        <td style="width:66%;">
+                <div class="segment-card">
+                    @foreach ($group as $k => $idx)
+                        @php
+                            $flight = $flights[$idx];
+                            $leg = $legs[$idx];
+
+                            $airlineCode = $flight->maskapai->code_iata ?? '';
+                            if (!empty($flight->maskapai->logo) && file_exists(public_path($flight->maskapai->logo))) {
+                                $airlineLogoPath = public_path($flight->maskapai->logo);
+                                $airlineLogoExists = true;
+                            } else {
+                                $airlineLogoPath = $airlineCode ? public_path('images/airlines/' . $airlineCode . '.png') : null;
+                                $airlineLogoExists = $airlineLogoPath && file_exists($airlineLogoPath);
+                            }
+                            $originCode = $flight->origin->code_iata ?? '';
+                            $destCode = $flight->destination->code_iata ?? '';
+                        @endphp
+
+                        {{-- Banner transit di antara dua segmen --}}
+                        @if ($k > 0)
+                            @php $tp = $flights[$group[$k - 1]]->destination; @endphp
+                            <div class="transit-banner">
+                                Transit di {{ $tp->city_name }}
+                                &middot; {{ $tp->airport_name ? $tp->airport_name . ' (' . $tp->code_iata . ')' : $tp->code_iata }}
+                                @if ($leg['layover_before'])
+                                    <span class="transit-duration">{{ $leg['layover_before'] }}</span>
+                                @endif
+                            </div>
+                        @endif
+
+                        <div class="segment-body" style="{{ $k > 0 ? 'padding-top:12px;' : '' }}">
                             <table>
                                 <tr>
-                                    <td style="width:16%;">
-                                        <div class="leg-time">{{ $flight->dep_time }}</div>
-                                        <div class="leg-date">
-                                            {{ $flight->departure_date->translatedFormat('D, d M Y') }}</div>
+                                    <td style="width:70%;">
+                                        <table>
+                                            {{-- Berangkat: jam, titik, dan kota dalam satu baris, rata tengah --}}
+                                            <tr>
+                                                <td class="v-mid" style="width:22%;">
+                                                    <div class="leg-time">{{ $flight->dep_time }}
+                                                        @if ($leg['depTz'])
+                                                            <span class="leg-tz">{{ $leg['depTz'] }}</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="v-mid" style="width:8%;">
+                                                    <div style="height:10px;"></div>
+                                                    <div class="leg-dot"></div>
+                                                    <div class="leg-line" style="height:10px;"></div>
+                                                </td>
+                                                <td class="v-mid leg-connector">
+                                                    <div class="leg-place">{{ $flight->origin->city_name }} - {{ $originCode }}</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="leg-date">
+                                                        {{ ($leg['dep'] ?? $flight->departure_date)->translatedFormat('D, d M Y') }}
+                                                    </div>
+                                                </td>
+                                                <td><div class="leg-line" style="height:14px;"></div></td>
+                                                <td></td>
+                                            </tr>
+
+                                            {{-- Jarak antar kota (garis tetap tersambung) --}}
+                                            <tr>
+                                                <td></td>
+                                                <td><div class="leg-line" style="height:12px;"></div></td>
+                                                <td></td>
+                                            </tr>
+
+                                            {{-- Tiba --}}
+                                            <tr>
+                                                <td class="v-mid">
+                                                    <div class="leg-time">{{ $flight->arr_time }}
+                                                        @if ($leg['arrTz'])
+                                                            <span class="leg-tz">{{ $leg['arrTz'] }}</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="v-mid">
+                                                    <div class="leg-line" style="height:10px;"></div>
+                                                    <div class="leg-dot"></div>
+                                                    <div style="height:10px;"></div>
+                                                </td>
+                                                <td class="v-mid leg-connector">
+                                                    <div class="leg-place">{{ $flight->destination->city_name }} - {{ $destCode }}</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="leg-date">
+                                                        {{ ($leg['arr'] ?? $flight->departure_date)->translatedFormat('D, d M Y') }}
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </table>
+
+                                        @if ($leg['duration'])
+                                            <div style="margin-top:10px; font-size:9px; color:#7a8699;">
+                                                Durasi terbang: <strong style="color:#16324F;">{{ $leg['duration'] }}</strong>
+                                            </div>
+                                        @endif
                                     </td>
-                                    <td style="width:2%; text-align:center;"><span class="leg-dot">&bull;</span></td>
-                                    <td class="leg-connector">
-                                        <div class="leg-place">{{ $flight->origin->city_name }} - {{ $originCode }}
+                                    <td style="width:30%;">
+                                        <div class="airline-box">
+                                            <span class="airline-logo-circle">
+                                                @if ($airlineLogoExists)
+                                                    <img src="{{ $airlineLogoPath }}" class="airline-logo-img">
+                                                @else
+                                                    <span class="airline-badge-text">{{ strtoupper(substr($airlineCode ?: $flight->maskapai->name, 0, 2)) }}</span>
+                                                @endif
+                                            </span>
+                                            <div class="airline-name">{{ $flight->maskapai->name }}</div>
+                                            <div class="flightno-label">No. Penerbangan</div>
+                                            <div class="flightno-value">{{ $airlineCode }} {{ $flight->flight_no }}</div>
+                                            <div class="flightno-class">
+                                                @if (trim((string) $flight->subclass) !== '')
+                                                    {{ strtoupper(trim($flight->subclass)) }} &middot;
+                                                @endif
+                                                Economy
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
                             </table>
-                            <table style="margin-top:12px;">
-                                <tr>
-                                    <td style="width:16%;">
-                                        <div class="leg-time">{{ $flight->arr_time }}</div>
-                                        <div class="leg-date">
-                                            {{ $flight->departure_date->translatedFormat('D, d M Y') }}</div>
-                                    </td>
-                                    <td style="width:2%; text-align:center;"><span class="leg-dot">&bull;</span></td>
-                                    <td class="leg-connector">
-                                        <div class="leg-place">{{ $flight->destination->city_name }} -
-                                            {{ $destCode }}</div>
-                                    </td>
-                                </tr>
-                            </table>
-                            @if ($durationLabel)
-                                <div style="margin-top:10px; font-size:9px; color:#7a8699;">
-                                    Durasi terbang: <strong style="color:#16324F;">{{ $durationLabel }}</strong>
-                                </div>
-                            @endif
-                        </td>
-                        <td style="width:34%;">
-                            <div class="airline-box">
-                                <span class="airline-logo-circle">
-                                    @if ($airlineLogoExists)
-                                        <img src="{{ $airlineLogoPath }}" class="airline-logo-img">
-                                    @else
-                                        <span class="airline-badge-text">{{ strtoupper(substr($airlineCode ?: $flight->maskapai->name, 0, 2)) }}</span>
-                                    @endif
-                                </span>
-                                <div class="airline-name">{{ $flight->maskapai->name }}</div>
-                                <div class="flightno-label">No. Penerbangan</div>
-                                <div class="flightno-value">{{ $airlineCode }} {{ $flight->flight_no }}</div>
-                                <div class="flightno-class">{{ strtoupper($flight->subclass) ?: 'Y' }} &middot; Economy</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            @if ($isConnecting)
-                <div class="transit-banner">
-                    Transit di {{ $flight->destination->city_name }}
-                    @if ($layoverLabel)
-                        <span class="transit-duration">{{ $layoverLabel }}</span>
-                    @endif
+                        </div>
+                    @endforeach
                 </div>
-            @else
-                </div> {{-- close .segment-card --}}
-            @endif
-
-            @php $prevConnecting = $isConnecting; @endphp
+            </div>
         @endforeach
 
         {{-- Passenger Details --}}
-        <p class="section-title">Detail Penumpang</p>
-        <table class="ptable">
-            <tr>
-                <th style="width:8%;">No.</th>
-                <th style="width:42%;">Nama</th>
-                <th style="width:20%;">Tipe</th>
-                <th style="width:30%;">No. Tiket</th>
-            </tr>
-            @foreach ($booking->passengers as $i => $p)
+        <div class="section">
+            <p class="section-title">Detail Penumpang</p>
+            <table class="ptable">
                 <tr>
-                    <td>{{ $i + 1 }}</td>
-                    <td class="passenger-name">{{ strtoupper($p->title) }} {{ strtoupper($p->name) }}</td>
-                    <td>{{ $p->type }}</td>
-                    <td>{{ $p->ticket_number }}</td>
+                    <th style="width:8%;">No.</th>
+                    <th style="width:42%;">Nama</th>
+                    <th style="width:20%;">Tipe</th>
+                    <th style="width:30%;">No. Tiket</th>
                 </tr>
-            @endforeach
-        </table>
+                @foreach ($booking->passengers as $i => $p)
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td class="passenger-name">{{ strtoupper($p->title) }} {{ strtoupper($p->name) }}</td>
+                        <td>{{ $p->type }}</td>
+                        <td>{{ $p->ticket_number }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
 
         {{-- Baggage --}}
-        <p class="section-title">Bagasi</p>
-        @foreach ($booking->passengers as $p)
-            <div class="baggage-box">
-                <div class="baggage-head">
-                    <span class="bname">{{ $p->title }} {{ $p->name }}</span>
-                    <span class="btype">{{ $p->type }}</span>
+        <div class="section">
+            <p class="section-title">Bagasi</p>
+            @foreach ($booking->passengers as $p)
+                <div class="baggage-box">
+                    <div class="baggage-head">
+                        <span class="bname">{{ $p->title }} {{ $p->name }}</span>
+                        <span class="btype">{{ $p->type }}</span>
+                    </div>
+                    <table class="baggage-row">
+                        <tr>
+                            <td class="baggage-cell">
+                                @if (file_exists($iconCabin))
+                                    <img src="{{ $iconCabin }}" class="icon-inline">
+                                @endif
+                                <span class="baggage-label">Bagasi Kabin (gratis)</span>
+                                <div class="baggage-value">7 Kg &middot; 1 tas</div>
+                            </td>
+                            <td class="baggage-cell">
+                                @if (file_exists($iconChecked))
+                                    <img src="{{ $iconChecked }}" class="icon-inline">
+                                @endif
+                                <span class="baggage-label">Bagasi Tercatat</span>
+                                <div class="baggage-value">{{ $p->baggage ?: '-' }}</div>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
-                <table class="baggage-row">
+            @endforeach
+        </div>
+
+        {{-- Fare --}}
+        <div class="section">
+            <p class="section-title">Rincian Harga</p>
+            <div class="fare-box">
+                <table>
                     <tr>
-                        <td class="baggage-cell">
-                            @if (file_exists($iconCabin))
-                                <img src="{{ $iconCabin }}" class="icon-inline">
-                            @endif
-                            <span class="baggage-label">Bagasi Kabin (gratis)</span>
-                            <div class="baggage-value">7 Kg &middot; 1 tas</div>
+                        <td>
+                            <div class="fare-label">Total Tarif</div>
+                            <div class="fare-note">
+                                {{ $booking->fare_note ?: 'Termasuk Tarif Dasar, Pajak & Biaya Lainnya' }}</div>
                         </td>
-                        <td class="baggage-cell">
-                            @if (file_exists($iconChecked))
-                                <img src="{{ $iconChecked }}" class="icon-inline">
-                            @endif
-                            <span class="baggage-label">Bagasi Tercatat</span>
-                            <div class="baggage-value">{{ $p->baggage ?: '-' }}</div>
+                        <td class="fare-value" style="width:35%;">
+                            {{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}
                         </td>
                     </tr>
                 </table>
             </div>
-        @endforeach
-
-        {{-- Fare --}}
-        <p class="section-title">Rincian Harga</p>
-        <div class="fare-box">
-            <table>
-                <tr>
-                    <td>
-                        <div class="fare-label">Total Tarif</div>
-                        <div class="fare-note">
-                            {{ $booking->fare_note ?: 'Termasuk Tarif Dasar, Pajak & Biaya Lainnya' }}</div>
-                    </td>
-                    <td class="fare-value" style="width:35%;">
-                        {{ strtoupper($booking->currency) }} {{ number_format($booking->total_fare, 0, ',', '.') }}
-                    </td>
-                </tr>
-            </table>
         </div>
 
     </div>
@@ -733,7 +898,7 @@
         <table>
             <tr>
                 <td style="width:60%;">
-                     <div class="footer-company">{{ strtoupper($booking->agency_name) }}</div>
+                    <div class="footer-company">{{ strtoupper($booking->agency_name) }}</div>
                     <div class="footer-tagline">{{ $booking->agency_tagline }}</div>
                     <div>{{ $booking->agency_address ?? 'Jl. Tgk. H. M Jl. Moh. Daud Beureuh No.50, Kuta Alam, Kec. Kuta Alam, Kota Banda Aceh, Aceh 23121' }}</div>
                 </td>

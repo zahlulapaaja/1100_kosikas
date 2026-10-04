@@ -115,7 +115,9 @@ class InvoiceController extends Controller
     public function update(Request $request, Invoice $invoice)
     {
         $data = $request->validate([
-            'orderer_address'      => 'nullable|string|max:150',
+            'orderer_name'  => 'required|string|max:150',
+            'invoice_code' => 'nullable|string|max:50',
+            'orderer_address' => 'nullable|string|max:150',
             'orderer_phone'        => 'nullable|string|max:30',
             'bank_name'            => 'nullable|string|max:100',
             'bank_account_number'  => 'nullable|string|max:50',
@@ -138,6 +140,8 @@ class InvoiceController extends Controller
 
         DB::transaction(function () use ($invoice, $data) {
             $invoice->update([
+                'orderer_name'        => $data['orderer_name'],
+                'invoice_code'        => $data['invoice_code'] ?: $invoice->invoice_code,
                 'orderer_address'     => $data['orderer_address'] ?? null,
                 'orderer_phone'       => $data['orderer_phone'] ?? null,
                 'bank_name'           => $data['bank_name'] ?? null,
@@ -183,8 +187,15 @@ class InvoiceController extends Controller
             }
         });
 
-        return redirect()->route('travel.invoices.show', $invoice)
-            ->with('success', 'Invoice berhasil disimpan.');
+        $showUrl = route('travel.invoices.show', $invoice);
+
+        // permintaan dari fetch: balas JSON, tab baru yang akan membuka invoice
+        if ($request->expectsJson()) {
+            return response()->json(['redirect' => $showUrl]);
+        }
+
+        // fallback (misalnya JS mati): perilaku lama
+        return redirect()->to($showUrl)->with('success', 'Invoice berhasil disimpan.');
     }
 
     /**
