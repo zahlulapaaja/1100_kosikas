@@ -24,6 +24,20 @@
             display: block;
         }
 
+        /* Dua logo maskapai yang beririsan */
+        .airline-logo-stack {
+            display: flex;
+            align-items: center;
+        }
+
+        .airline-logo-stack .airline-logo-circle {
+            box-shadow: 0 0 0 2px #fff;
+        }
+
+        .airline-logo-stack .airline-logo-circle+.airline-logo-circle {
+            margin-left: -16px;
+        }
+
         .harga-input {
             max-width: 160px;
         }
@@ -130,15 +144,28 @@
         .kt-img-maskapai .nama {
             font-weight: 600;
             font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 150px;
+            line-height: 1.3;
+            max-width: 190px;
         }
 
         .kt-img-maskapai .kode {
             font-size: 11px;
             color: #808A9C;
+        }
+
+        /* Dua logo maskapai yang beririsan di gambar */
+        .kt-img-logos {
+            display: flex;
+            align-items: center;
+        }
+
+        .kt-img-logos .logo {
+            background: #fff;
+            box-shadow: 0 0 0 2px #fff;
+        }
+
+        .kt-img-logos .logo+.logo {
+            margin-left: -12px;
         }
 
         .kt-img-harga {
@@ -168,6 +195,13 @@
             font-size: 11px;
             color: #808A9C;
             margin-top: 2px;
+        }
+
+        .kt-img-transit {
+            margin-top: 6px;
+            padding-left: 44px;
+            font-size: 11px;
+            color: #B7791F;
         }
 
         .kt-img-footer {
@@ -313,6 +347,35 @@
                 $asal = $wilayahs->firstWhere('id', request('wilayah_asal_id'));
 
                 $tujuan = $wilayahs->firstWhere('id', request('wilayah_tujuan_id'));
+
+                // Semua maskapai yang muncul di jadwal (maskapai pertama + maskapai lanjutan)
+                $daftarMaskapai = $jadwals
+                    ->pluck('maskapai')
+                    ->toBase()
+                    ->merge($jadwals->pluck('transitMaskapai')->toBase())
+                    ->filter()
+                    ->unique('id')
+                    ->sortBy('name');
+
+                // Cari path logo maskapai (null jika file tidak ada)
+                $resolveLogo = function ($mk) {
+                    if (!$mk) {
+                        return null;
+                    }
+
+                    $logo = $mk->logo ?? null;
+                    $kode = $mk->code_iata ?? null;
+
+                    if ($logo && file_exists(public_path($logo))) {
+                        return asset($logo);
+                    }
+
+                    if ($kode && file_exists(public_path('images/airlines/' . strtoupper($kode) . '.png'))) {
+                        return asset('images/airlines/' . strtoupper($kode) . '.png');
+                    }
+
+                    return null;
+                };
             @endphp
 
 
@@ -429,9 +492,10 @@
                                         onchange="filterJadwal()">
                                         <option value="">Semua Maskapai</option>
 
-                                        @foreach ($jadwals->pluck('maskapai')->filter()->unique('id')->sortBy('name') as $mk)
+                                        @foreach ($daftarMaskapai as $mk)
                                             <option value="{{ $mk->id }}">{{ $mk->name }}
-                                                ({{ $mk->code_iata }})</option>
+                                                ({{ $mk->code_iata }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -492,7 +556,7 @@
                                         </th>
 
                                         <th>
-                                            Durasi
+                                            Durasi Total
                                         </th>
 
                                         <th>
@@ -511,21 +575,7 @@
 
                                     @foreach ($jadwals as $jadwal)
                                         @php
-                                            $airlineCode = $jadwal->maskapai->code_iata ?? null;
-
-                                            $logo = $jadwal->maskapai->logo ?? null;
-
-                                            $logoPath =
-                                                $logo && file_exists(public_path($logo))
-                                                    ? asset($logo)
-                                                    : ($airlineCode &&
-                                                    file_exists(
-                                                        public_path(
-                                                            'images/airlines/' . strtoupper($airlineCode) . '.png',
-                                                        ),
-                                                    )
-                                                        ? asset('images/airlines/' . strtoupper($airlineCode) . '.png')
-                                                        : null);
+                                            $logoPath = $resolveLogo($jadwal->maskapai);
 
                                             $berangkat = \Carbon\Carbon::parse($jadwal->jam_berangkat);
                                             $sampai = \Carbon\Carbon::parse($jadwal->jam_sampai);
@@ -537,15 +587,46 @@
                                             $menit = $berangkat->diffInMinutes($sampai);
                                             $jam = intdiv($menit, 60);
                                             $sisa = $menit % 60;
+
+                                            // Data transit
+                                            $punyaTransit = (bool) $jadwal->punya_transit;
+                                            $transitKode = $punyaTransit ? $jadwal->transit?->code_iata : null;
+                                            $transitDurasi = $punyaTransit ? $jadwal->transit_durasi_label : null;
+
+                                            // Maskapai lanjutan hanya dianggap ada jika berbeda dari maskapai pertama
+                                            $maskapaiLanjut =
+                                                $punyaTransit &&
+                                                $jadwal->transit_maskapai_id &&
+                                                $jadwal->transit_maskapai_id != $jadwal->maskapai_id
+                                                    ? $jadwal->transitMaskapai
+                                                    : null;
+
+                                            $logoLanjut = $resolveLogo($maskapaiLanjut);
+
+                                            $namaTampil =
+                                                $jadwal->maskapai->name .
+                                                ($maskapaiLanjut ? ' + ' . $maskapaiLanjut->name : '');
+                                            $kodeTampil =
+                                                $jadwal->maskapai->code_iata .
+                                                ($maskapaiLanjut ? ' + ' . $maskapaiLanjut->code_iata : '');
+
+                                            // ID maskapai pertama + lanjutan, untuk filter
+                                            $maskapaiIds = collect([$jadwal->maskapai_id, $jadwal->transit_maskapai_id])
+                                                ->filter()
+                                                ->implode(',');
                                         @endphp
 
                                         <tr class="jadwal-row" data-maskapai="{{ $jadwal->maskapai->name }}"
                                             data-kode="{{ $jadwal->maskapai->code_iata }}"
-                                            data-maskapai-id="{{ $jadwal->maskapai_id }}"
-                                            data-logo="{{ $logoPath }}"
+                                            data-maskapai-ids="{{ $maskapaiIds }}" data-logo="{{ $logoPath }}"
                                             data-berangkat="{{ $berangkat->format('H:i') }}"
                                             data-tiba="{{ $sampai->format('H:i') }}"
-                                            data-durasi="{{ $jam }}j {{ $sisa }}m">
+                                            data-durasi="{{ $jam }}j {{ $sisa }}m"
+                                            data-transit="{{ $transitKode }}"
+                                            data-transit-durasi="{{ $transitDurasi }}"
+                                            data-lanjut="{{ $maskapaiLanjut?->name }}"
+                                            data-kode-lanjut="{{ $maskapaiLanjut?->code_iata }}"
+                                            data-logo-lanjut="{{ $logoLanjut }}">
 
                                             <td class="px-4">
 
@@ -558,22 +639,47 @@
 
                                                 <div class="d-flex align-items-center gap-2">
 
-                                                    @if ($logoPath)
-                                                        <div class="airline-logo-circle">
-                                                            <img src="{{ $logoPath }}"
-                                                                alt="{{ $jadwal->maskapai->name }}" class="airline-logo">
+                                                    @if ($logoPath || $logoLanjut)
+                                                        <div class="airline-logo-stack">
+
+                                                            @if ($logoPath)
+                                                                <div class="airline-logo-circle">
+                                                                    <img src="{{ $logoPath }}"
+                                                                        alt="{{ $jadwal->maskapai->name }}"
+                                                                        class="airline-logo">
+                                                                </div>
+                                                            @endif
+
+                                                            @if ($logoLanjut)
+                                                                <div class="airline-logo-circle">
+                                                                    <img src="{{ $logoLanjut }}"
+                                                                        alt="{{ $maskapaiLanjut->name }}"
+                                                                        class="airline-logo">
+                                                                </div>
+                                                            @endif
+
                                                         </div>
                                                     @endif
 
                                                     <div>
 
                                                         <div class="fw-semibold">
-                                                            {{ $jadwal->maskapai->name }}
+                                                            {{ $namaTampil }}
                                                         </div>
 
                                                         <small class="text-muted">
-                                                            {{ $jadwal->maskapai->code_iata }}
+                                                            {{ $kodeTampil }}
                                                         </small>
+
+                                                        @if ($punyaTransit)
+                                                            <div class="small mt-1">
+                                                                <span class="badge bg-warning text-dark">Transit</span>
+                                                                {{ $transitKode }}
+                                                                @if ($transitDurasi)
+                                                                    &middot; {{ $transitDurasi }}
+                                                                @endif
+                                                            </div>
+                                                        @endif
 
                                                     </div>
 
@@ -760,7 +866,7 @@
             return h * 60 + m;
         }
 
-        // Filter baris jadwal berdasarkan maskapai & rentang waktu berangkat
+        // Filter baris jadwal berdasarkan maskapai (pertama / lanjutan) & rentang waktu berangkat
         function filterJadwal() {
             const maskapaiFilter = document.getElementById('filterMaskapai').value;
             const waktuFilter = document.getElementById('filterWaktu').value;
@@ -778,15 +884,19 @@
             const semuaRow = document.querySelectorAll('.jadwal-row');
 
             semuaRow.forEach(function(row) {
-                const maskapaiId = row.dataset.maskapaiId;
+                const daftarMaskapaiId = (row.dataset.maskapaiIds || '').split(',');
                 const berangkatMenit = parseMenit(row.dataset.berangkat);
 
-                const cocokMaskapai = !maskapaiFilter || maskapaiId === maskapaiFilter;
+                const cocokMaskapai = !maskapaiFilter || daftarMaskapaiId.includes(maskapaiFilter);
                 const cocokWaktu = !rentang || (berangkatMenit >= rentang.dari && berangkatMenit <= rentang.sampai);
 
                 const checkbox = row.querySelector('.jadwal-checkbox');
 
                 if (cocokMaskapai && cocokWaktu) {
+                    // Baris yang sebelumnya tersembunyi (otomatis ter-uncheck) dicentang lagi saat muncul
+                    if (row.classList.contains('d-none') && checkbox) {
+                        checkbox.checked = true;
+                    }
                     row.classList.remove('d-none');
                     tampil++;
                 } else {
@@ -851,6 +961,13 @@
             document.getElementById('filterWilayahForm').submit();
         }
 
+        // HTML logo maskapai (gambar, atau kode IATA jika logo tidak ada)
+        function buatLogoHtml(logo, kode) {
+            return logo ?
+                `<img src="${logo}" class="logo" crossorigin="anonymous">` :
+                `<div class="logo" style="display:flex;align-items:center;justify-content:center;background:#F6F4EE;font-size:11px;font-weight:700;">${kode ?? ''}</div>`;
+        }
+
         function generateGambarPenerbangan() {
 
             const tanggalInput = document.getElementById('tanggalPenerbangan').value;
@@ -882,6 +999,13 @@
                 const tiba = row.dataset.tiba;
                 const durasi = row.dataset.durasi;
 
+                const transit = row.dataset.transit;
+                const transitDurasi = row.dataset.transitDurasi;
+
+                const lanjut = row.dataset.lanjut;
+                const kodeLanjut = row.dataset.kodeLanjut;
+                const logoLanjut = row.dataset.logoLanjut;
+
                 const hargaInput = row.querySelector('.harga-jadwal').value.trim();
 
                 if (!hargaInput) {
@@ -892,9 +1016,19 @@
                     'Rp ' + hargaInput :
                     'Hubungi kami';
 
-                const logoHtml = logo ?
-                    `<img src="${logo}" class="logo" crossorigin="anonymous">` :
-                    `<div class="logo" style="display:flex;align-items:center;justify-content:center;background:#F6F4EE;font-size:11px;font-weight:700;">${kode ?? ''}</div>`;
+                // Dua maskapai: logo bertumpuk, nama & kode dipisah "+"
+                const namaTampil = lanjut ? `${maskapai} + ${lanjut}` : maskapai;
+                const kodeTampil = lanjut ? `${kode} + ${kodeLanjut}` : kode;
+
+                const logoHtml = buatLogoHtml(logo, kode) +
+                    (lanjut ? buatLogoHtml(logoLanjut, kodeLanjut) : '');
+
+                // Geser info bawah supaya sejajar dengan teks nama maskapai
+                const offsetKiri = lanjut ? 66 : 44;
+
+                const transitHtml = transit ?
+                    `<div class="kt-img-transit" style="padding-left:${offsetKiri}px;">Transit ${transit}${transitDurasi ? ' &middot; ' + transitDurasi : ''}</div>` :
+                    '';
 
                 bodyContainer.insertAdjacentHTML('beforeend', `
                 <div class="kt-img-row">
@@ -902,10 +1036,12 @@
                     <div class="kt-img-row-top">
 
                         <div class="kt-img-maskapai">
-                            ${logoHtml}
+                            <div class="kt-img-logos">
+                                ${logoHtml}
+                            </div>
                             <div>
-                                <div class="nama">${maskapai}</div>
-                                <div class="kode">${kode}</div>
+                                <div class="nama">${namaTampil}</div>
+                                <div class="kode">${kodeTampil}</div>
                             </div>
                         </div>
 
@@ -915,12 +1051,14 @@
 
                     </div>
 
-                    <div class="kt-img-row-bottom">
+                    <div class="kt-img-row-bottom" style="padding-left:${offsetKiri}px;">
                         <div class="kt-img-jam">
                             <div class="waktu">${berangkat} &rarr; ${tiba}</div>
                         </div>
                         <div class="durasi">${durasi}</div>
                     </div>
+
+                    ${transitHtml}
 
                 </div>
             `);

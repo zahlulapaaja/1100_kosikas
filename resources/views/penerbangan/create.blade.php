@@ -1,95 +1,91 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="container-fluid">
 
-<div class="container-fluid">
+        <div class="mb-4">
 
-    <div class="mb-4">
+            <a href="{{ route('travel.penerbangan.index', [
+                'wilayah_asal_id' => $wilayahAsal->id,
+                'wilayah_tujuan_id' => $wilayahTujuan->id,
+            ]) }}"
+                class="text-decoration-none">
 
-        <a href="{{ route('travel.penerbangan.index', [
-            'wilayah_asal_id' => $wilayahAsal->id,
-            'wilayah_tujuan_id' => $wilayahTujuan->id,
-        ]) }}"
-           class="text-decoration-none">
+                ← Kembali ke Daftar Penerbangan
 
-            ← Kembali ke Daftar Penerbangan
+            </a>
 
-        </a>
+            <h4 class="mt-3 mb-1">
+                Tambah Jadwal Penerbangan
+            </h4>
 
-        <h4 class="mt-3 mb-1">
-            Tambah Jadwal Penerbangan
-        </h4>
+            <p class="text-muted">
+                Tambahkan jadwal penerbangan untuk rute berikut.
+            </p>
 
-        <p class="text-muted">
-            Tambahkan jadwal penerbangan untuk rute berikut.
-        </p>
-
-    </div>
-
-
-    <div class="row">
-
-        <div class="col-lg-8">
-
-            <div class="card border-0 shadow-sm">
-
-                <div class="card-body">
-
-                    <form method="POST"
-                          action="{{ route('travel.penerbangan.store') }}">
-
-                        @csrf
+        </div>
 
 
-                        {{-- Wilayah asal --}}
-                        <input type="hidden"
-                               name="wilayah_asal_id"
-                               value="{{ $wilayahAsal->id }}">
+        <div class="row">
+
+            <div class="col-lg-8">
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-body">
+
+                        <form method="POST" action="{{ route('travel.penerbangan.store') }}">
+
+                            @csrf
 
 
-                        {{-- Wilayah tujuan --}}
-                        <input type="hidden"
-                               name="wilayah_tujuan_id"
-                               value="{{ $wilayahTujuan->id }}">
+                            {{-- Wilayah asal --}}
+                            <input type="hidden" name="wilayah_asal_id" value="{{ $wilayahAsal->id }}">
 
 
-                        {{-- Rute --}}
-                        <div class="mb-4">
+                            {{-- Wilayah tujuan --}}
+                            <input type="hidden" name="wilayah_tujuan_id" value="{{ $wilayahTujuan->id }}">
 
-                            <label class="form-label fw-semibold">
-                                Rute Penerbangan
-                            </label>
 
-                            <div class="border rounded p-3">
+                            {{-- Rute --}}
+                            <div class="mb-4">
 
-                                <div class="row align-items-center text-center">
+                                <label class="form-label fw-semibold">
+                                    Rute Penerbangan
+                                </label>
 
-                                    <div class="col">
+                                <div class="border rounded p-3">
 
-                                        <div class="fs-3 fw-bold">
-                                            {{ $wilayahAsal->code_iata }}
+                                    <div class="row align-items-center text-center">
+
+                                        <div class="col">
+
+                                            <div class="fs-3 fw-bold">
+                                                {{ $wilayahAsal->code_iata }}
+                                            </div>
+
+                                            <div>
+                                                {{ $wilayahAsal->city_name }}
+                                            </div>
+
                                         </div>
 
-                                        <div>
-                                            {{ $wilayahAsal->city_name }}
+                                        <div class="col-auto">
+
+                                            <i class="bi bi-arrow-right fs-3"></i>
+
                                         </div>
 
-                                    </div>
+                                        <div class="col">
 
-                                    <div class="col-auto">
+                                            <div class="fs-3 fw-bold">
+                                                {{ $wilayahTujuan->code_iata }}
+                                            </div>
 
-                                        <i class="bi bi-arrow-right fs-3"></i>
+                                            <div>
+                                                {{ $wilayahTujuan->city_name }}
+                                            </div>
 
-                                    </div>
-
-                                    <div class="col">
-
-                                        <div class="fs-3 fw-bold">
-                                            {{ $wilayahTujuan->code_iata }}
-                                        </div>
-
-                                        <div>
-                                            {{ $wilayahTujuan->city_name }}
                                         </div>
 
                                     </div>
@@ -98,170 +94,246 @@
 
                             </div>
 
-                        </div>
 
+                            {{-- Maskapai --}}
+                            <div class="mb-3">
 
-                        {{-- Maskapai --}}
-                        <div class="mb-3">
+                                <label class="form-label fw-semibold">
+                                    Maskapai
+                                </label>
 
-                            <label class="form-label fw-semibold">
-                                Maskapai
-                            </label>
-
-                            <select name="maskapai_id"
-                                    class="form-select @error('maskapai_id') is-invalid @enderror"
+                                <select name="maskapai_id" class="form-select @error('maskapai_id') is-invalid @enderror"
                                     required>
 
-                                <option value="">
-                                    -- Pilih Maskapai --
-                                </option>
-
-                                @foreach ($maskapais as $maskapai)
-
-                                    <option value="{{ $maskapai->id }}"
-                                        @selected(old('maskapai_id') == $maskapai->id)>
-
-                                        {{ $maskapai->name }}
-                                        ({{ $maskapai->code_iata }})
-
+                                    <option value="">
+                                        -- Pilih Maskapai --
                                     </option>
 
-                                @endforeach
+                                    @foreach ($maskapais as $maskapai)
+                                        <option value="{{ $maskapai->id }}" @selected(old('maskapai_id') == $maskapai->id)>
 
-                            </select>
+                                            {{ $maskapai->name }}
+                                            ({{ $maskapai->code_iata }})
+                                        </option>
+                                    @endforeach
 
-                            @error('maskapai_id')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
+                                </select>
+
+                                @error('maskapai_id')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+
+                            </div>
+
+
+                            <div class="row">
+
+                                {{-- Jam berangkat --}}
+                                <div class="col-md-6 mb-3">
+
+                                    <label class="form-label fw-semibold">
+                                        Jam Berangkat
+                                    </label>
+
+                                    <input type="time" name="jam_berangkat" value="{{ old('jam_berangkat') }}"
+                                        class="form-control @error('jam_berangkat') is-invalid @enderror" required>
+
+                                    @error('jam_berangkat')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+
                                 </div>
-                            @enderror
-
-                        </div>
 
 
-                        <div class="row">
+                                {{-- Jam sampai --}}
+                                <div class="col-md-6 mb-3">
 
-                            {{-- Jam berangkat --}}
-                            <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Jam Sampai
+                                    </label>
 
-                                <label class="form-label fw-semibold">
-                                    Jam Berangkat
-                                </label>
+                                    <input type="time" name="jam_sampai" value="{{ old('jam_sampai') }}"
+                                        class="form-control @error('jam_sampai') is-invalid @enderror" required>
 
-                                <input type="time"
-                                       name="jam_berangkat"
-                                       value="{{ old('jam_berangkat') }}"
-                                       class="form-control @error('jam_berangkat') is-invalid @enderror"
-                                       required>
+                                    @error('jam_sampai')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
 
-                                @error('jam_berangkat')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
+                                </div>
+
+                            </div>
+
+                            {{-- Transit --}}
+                            <div class="mb-3">
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="punya_transit"
+                                        name="punya_transit" value="1" @checked(old('punya_transit'))>
+                                    <label class="form-check-label fw-semibold" for="punya_transit">
+                                        Penerbangan ini transit
+                                    </label>
+                                </div>
+
+                                <div id="transit-fields"
+                                    class="border rounded p-3 {{ old('punya_transit') ? '' : 'd-none' }}">
+
+                                    <div class="row">
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">Bandara Transit</label>
+
+                                            <select name="transit_wilayah_id"
+                                                class="form-select @error('transit_wilayah_id') is-invalid @enderror">
+                                                <option value="">-- Pilih Bandara Transit --</option>
+
+                                                @foreach ($wilayahTransits as $w)
+                                                    <option value="{{ $w->id }}" @selected(old('transit_wilayah_id') == $w->id)>
+                                                        {{ $w->city_name }} ({{ $w->code_iata }}) -
+                                                        {{ $w->airport_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            @error('transit_wilayah_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-semibold">Lama Transit</label>
+
+                                            <div class="input-group">
+                                                <input type="number" name="transit_jam" min="0" max="23"
+                                                    value="{{ old('transit_jam', 0) }}"
+                                                    class="form-control @error('transit_jam') is-invalid @enderror">
+                                                <span class="input-group-text">jam</span>
+
+                                                <input type="number" name="transit_menit" min="0" max="59"
+                                                    value="{{ old('transit_menit', 0) }}"
+                                                    class="form-control @error('transit_menit') is-invalid @enderror">
+                                                <span class="input-group-text">menit</span>
+                                            </div>
+
+                                            @error('transit_jam')
+                                                <div class="text-danger small">{{ $message }}</div>
+                                            @enderror
+                                            @error('transit_menit')
+                                                <div class="text-danger small">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
                                     </div>
-                                @enderror
+
+                                    <div class="mb-1">
+                                        <label class="form-label fw-semibold">Maskapai Lanjutan</label>
+
+                                        <select name="transit_maskapai_id"
+                                            class="form-select @error('transit_maskapai_id') is-invalid @enderror">
+                                            <option value="">-- Sama dengan maskapai pertama --</option>
+
+                                            @foreach ($maskapais as $maskapai)
+                                                <option value="{{ $maskapai->id }}" @selected(old('transit_maskapai_id') == $maskapai->id)>
+                                                    {{ $maskapai->name }} ({{ $maskapai->code_iata }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+
+                                        <div class="form-text">
+                                            Isi jika penerbangan setelah transit memakai maskapai berbeda.
+                                        </div>
+
+                                        @error('transit_maskapai_id')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                </div>
 
                             </div>
 
 
-                            {{-- Jam sampai --}}
-                            <div class="col-md-6 mb-3">
+                            <div class="d-flex justify-content-end gap-2 mt-3">
 
-                                <label class="form-label fw-semibold">
-                                    Jam Sampai
-                                </label>
+                                <a href="{{ route('travel.penerbangan.index', [
+                                    'wilayah_asal_id' => $wilayahAsal->id,
+                                    'wilayah_tujuan_id' => $wilayahTujuan->id,
+                                ]) }}"
+                                    class="btn btn-light">
 
-                                <input type="time"
-                                       name="jam_sampai"
-                                       value="{{ old('jam_sampai') }}"
-                                       class="form-control @error('jam_sampai') is-invalid @enderror"
-                                       required>
+                                    Batal
 
-                                @error('jam_sampai')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
-                                @enderror
+                                </a>
+
+                                <button type="submit" class="btn btn-primary">
+
+                                    <i class="bi bi-save"></i>
+                                    Simpan Jadwal
+
+                                </button>
 
                             </div>
 
-                        </div>
+                        </form>
 
-
-                        <div class="d-flex justify-content-end gap-2 mt-3">
-
-                            <a href="{{ route('travel.penerbangan.index', [
-                                'wilayah_asal_id' => $wilayahAsal->id,
-                                'wilayah_tujuan_id' => $wilayahTujuan->id,
-                            ]) }}"
-                               class="btn btn-light">
-
-                                Batal
-
-                            </a>
-
-                            <button type="submit"
-                                    class="btn btn-primary">
-
-                                <i class="bi bi-save"></i>
-                                Simpan Jadwal
-
-                            </button>
-
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
 
+            {{-- Informasi --}}
+            <div class="col-lg-4">
 
-        {{-- Informasi --}}
-        <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
 
-            <div class="card border-0 shadow-sm">
+                    <div class="card-body">
 
-                <div class="card-body">
+                        <h6 class="fw-bold">
+                            Informasi Rute
+                        </h6>
 
-                    <h6 class="fw-bold">
-                        Informasi Rute
-                    </h6>
+                        <hr>
 
-                    <hr>
+                        <div class="mb-3">
 
-                    <div class="mb-3">
+                            <small class="text-muted">
+                                Dari
+                            </small>
 
-                        <small class="text-muted">
-                            Dari
-                        </small>
+                            <div class="fw-semibold">
+                                {{ $wilayahAsal->airport_name }}
+                            </div>
 
-                        <div class="fw-semibold">
-                            {{ $wilayahAsal->airport_name }}
+                            <div>
+                                {{ $wilayahAsal->city_name }}
+                                ({{ $wilayahAsal->code_iata }})
+                            </div>
+
                         </div>
+
 
                         <div>
-                            {{ $wilayahAsal->city_name }}
-                            ({{ $wilayahAsal->code_iata }})
-                        </div>
 
-                    </div>
+                            <small class="text-muted">
+                                Ke
+                            </small>
 
+                            <div class="fw-semibold">
+                                {{ $wilayahTujuan->airport_name }}
+                            </div>
 
-                    <div>
+                            <div>
+                                {{ $wilayahTujuan->city_name }}
+                                ({{ $wilayahTujuan->code_iata }})
+                            </div>
 
-                        <small class="text-muted">
-                            Ke
-                        </small>
-
-                        <div class="fw-semibold">
-                            {{ $wilayahTujuan->airport_name }}
-                        </div>
-
-                        <div>
-                            {{ $wilayahTujuan->city_name }}
-                            ({{ $wilayahTujuan->code_iata }})
                         </div>
 
                     </div>
@@ -273,18 +345,29 @@
         </div>
 
     </div>
+    <script>
+        document.querySelector('form[action="{{ route('travel.penerbangan.store') }}"]')
+            .addEventListener('submit', function(e) {
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn.disabled) {
+                    e.preventDefault();
+                    return;
+                }
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+            });
 
-</div>
-<script>
-    document.querySelector('form[action="{{ route('travel.penerbangan.store') }}"]')
-        .addEventListener('submit', function (e) {
-            const btn = this.querySelector('button[type="submit"]');
-            if (btn.disabled) {
-                e.preventDefault();
-                return;
-            }
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
-        });
-</script>
+        const switchTransit = document.getElementById('punya_transit');
+        const boxTransit = document.getElementById('transit-fields');
+
+        function toggleTransit() {
+            const on = switchTransit.checked;
+            boxTransit.classList.toggle('d-none', !on);
+            boxTransit.querySelectorAll('input, select').forEach(el => el.disabled = !on);
+            boxTransit.querySelector('[name="transit_wilayah_id"]').required = on;
+        }
+
+        switchTransit.addEventListener('change', toggleTransit);
+        toggleTransit(); // sinkron saat halaman dimuat (termasuk setelah validasi gagal)
+    </script>
 @endsection

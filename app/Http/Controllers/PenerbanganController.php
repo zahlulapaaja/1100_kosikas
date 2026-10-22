@@ -33,7 +33,9 @@ class PenerbanganController extends Controller
             $jadwals = Penerbangan::with([
                 'asal',
                 'tujuan',
-                'maskapai'
+                'maskapai',
+                'transit',
+                'transitMaskapai',
             ])
                 ->where('wilayah_asal_id', $request->wilayah_asal_id)
                 ->where('wilayah_tujuan_id', $request->wilayah_tujuan_id)
@@ -62,10 +64,16 @@ class PenerbanganController extends Controller
 
         $maskapais = Maskapai::orderBy('name')->get();
 
+        $wilayahTransits = $this->daftarWilayahTransit(
+            $wilayahAsal->id,
+            $wilayahTujuan->id
+        );
+
         return view('penerbangan.create', compact(
             'wilayahAsal',
             'wilayahTujuan',
-            'maskapais'
+            'maskapais',
+            'wilayahTransits'
         ));
     }
 
@@ -80,24 +88,13 @@ class PenerbanganController extends Controller
             'maskapai_id' => 'required|exists:maskapais,id',
             'jam_berangkat' => 'required|date_format:H:i',
             'jam_sampai' => 'required|date_format:H:i',
-        ]);
+        ] + $this->aturanTransit());
 
-        // Cegah jadwal duplikat (mis. akibat submit dobel)
-        $duplikat = Penerbangan::where('wilayah_asal_id', $validated['wilayah_asal_id'])
-            ->where('wilayah_tujuan_id', $validated['wilayah_tujuan_id'])
-            ->where('maskapai_id', $validated['maskapai_id'])
-            ->where('jam_berangkat', $validated['jam_berangkat'])
-            ->exists();
-
-        if ($duplikat) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'jam_berangkat' => 'Jadwal dengan maskapai dan jam berangkat yang sama sudah ada di rute ini.'
-                ]);
+        if ($error = $this->cekDurasiTransit($request)) {
+            return $error;
         }
 
-        Penerbangan::create($validated);
+        Penerbangan::create($this->normalisasiTransit($validated, $request));
 
         return redirect()
             ->route('travel.penerbangan.index', [
@@ -112,13 +109,19 @@ class PenerbanganController extends Controller
      */
     public function edit(Penerbangan $penerbangan)
     {
-        $penerbangan->load(['asal', 'tujuan', 'maskapai']);
+        $penerbangan->load(['asal', 'tujuan', 'maskapai', 'transit', 'transitMaskapai']);
 
         $maskapais = Maskapai::orderBy('name')->get();
 
+        $wilayahTransits = $this->daftarWilayahTransit(
+            $penerbangan->wilayah_asal_id,
+            $penerbangan->wilayah_tujuan_id
+        );
+
         return view('penerbangan.edit', compact(
             'penerbangan',
-            'maskapais'
+            'maskapais',
+            'wilayahTransits'
         ));
     }
 
@@ -131,25 +134,13 @@ class PenerbanganController extends Controller
             'maskapai_id' => 'required|exists:maskapais,id',
             'jam_berangkat' => 'required|date_format:H:i',
             'jam_sampai' => 'required|date_format:H:i',
-        ]);
+        ] + $this->aturanTransit($penerbangan));
 
-        // Cegah duplikat terhadap jadwal lain di rute yang sama
-        $duplikat = Penerbangan::where('wilayah_asal_id', $penerbangan->wilayah_asal_id)
-            ->where('wilayah_tujuan_id', $penerbangan->wilayah_tujuan_id)
-            ->where('maskapai_id', $validated['maskapai_id'])
-            ->where('jam_berangkat', $validated['jam_berangkat'])
-            ->where('id', '!=', $penerbangan->id)
-            ->exists();
-
-        if ($duplikat) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'jam_berangkat' => 'Jadwal dengan maskapai dan jam berangkat yang sama sudah ada di rute ini.'
-                ]);
+        if ($error = $this->cekDurasiTransit($request)) {
+            return $error;
         }
 
-        $penerbangan->update($validated);
+        $penerbangan->update($this->normalisasiTransit($validated, $request));
 
         return redirect()
             ->route('travel.penerbangan.index', [
@@ -175,5 +166,95 @@ class PenerbanganController extends Controller
                 'wilayah_tujuan_id' => $tujuan,
             ])
             ->with('success', 'Jadwal penerbangan berhasil dihapus.');
+    }
+
+    /* =====================================================================
+     |  Helper transit
+     | ===================================================================== */
+
+    /**
+     * Daftar bandara yang boleh dipilih sebagai bandara transit
+     * (tidak boleh sama dengan asal atau tujuan).
+     */
+    private function daftarWilayahTransit(int $asalId, int $tujuanId)
+    {
+        return Wilayah::where('is_active', true)
+            ->whereNotIn('id', [$asalId, $tujuanId])
+            ->orderBy('city_name')
+            ->get();
+    }
+
+    /**
+     * Aturan validasi field transit.
+     *
+     * - Saat tambah (store): asal/tujuan ada di request, pakai "different".
+     * - Saat edit (update): asal/tujuan tidak ada di form, pakai "not_in"
+     *   dengan data dari jadwal yang tersimpan.
+     */
+    private function aturanTransit(?Penerbangan $penerbangan = null): array
+    {
+        $aturanBandara = [
+            'nullable',
+            'required_if:punya_transit,1',
+            'exists:wilayahs,id',
+        ];
+
+        if ($penerbangan) {
+            $aturanBandara[] = 'not_in:' . $penerbangan->wilayah_asal_id . ',' . $penerbangan->wilayah_tujuan_id;
+        } else {
+            $aturanBandara[] = 'different:wilayah_asal_id';
+            $aturanBandara[] = 'different:wilayah_tujuan_id';
+        }
+
+        return [
+            'punya_transit'       => 'nullable|boolean',
+            'transit_wilayah_id'  => $aturanBandara,
+            'transit_maskapai_id' => 'nullable|exists:maskapais,id',
+            'transit_jam'         => 'nullable|integer|min:0|max:23',
+            'transit_menit'       => 'nullable|integer|min:0|max:59',
+        ];
+    }
+
+    /**
+     * Lama transit wajib lebih dari 0 menit jika penerbangan transit.
+     * Mengembalikan redirect error, atau null jika valid.
+     */
+    private function cekDurasiTransit(Request $request)
+    {
+        if (! $request->boolean('punya_transit')) {
+            return null;
+        }
+
+        $durasi = ((int) $request->input('transit_jam', 0)) * 60
+            + ((int) $request->input('transit_menit', 0));
+
+        if ($durasi < 1) {
+            return back()
+                ->withInput()
+                ->withErrors(['transit_jam' => 'Lama transit harus diisi.']);
+        }
+
+        return null;
+    }
+
+    /**
+     * Ubah input form transit menjadi kolom database.
+     * Jika tidak transit, semua kolom transit dikosongkan.
+     */
+    private function normalisasiTransit(array $validated, Request $request): array
+    {
+        $punyaTransit = $request->boolean('punya_transit');
+
+        $durasi = ((int) ($validated['transit_jam'] ?? 0)) * 60
+            + ((int) ($validated['transit_menit'] ?? 0));
+
+        unset($validated['transit_jam'], $validated['transit_menit']);
+
+        $validated['punya_transit']        = $punyaTransit;
+        $validated['transit_wilayah_id']   = $punyaTransit ? ($validated['transit_wilayah_id'] ?? null) : null;
+        $validated['transit_maskapai_id']  = $punyaTransit ? ($validated['transit_maskapai_id'] ?? null) : null;
+        $validated['transit_durasi_menit'] = $punyaTransit ? $durasi : null;
+
+        return $validated;
     }
 }
