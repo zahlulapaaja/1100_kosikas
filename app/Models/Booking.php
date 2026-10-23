@@ -74,8 +74,10 @@ class Booking extends Model
             return null;
         }
 
-        $nameParts = explode(' ', trim($passenger->name), 2);
-        $surname   = $nameParts[1] ?? $nameParts[0];
+        // Pecah per spasi (abaikan spasi ganda), lastName = kata terakhir saja.
+        // Nama 1 kata: dipakai apa adanya sebagai lastName.
+        $nameParts = preg_split('/\s+/', trim($passenger->name), -1, PREG_SPLIT_NO_EMPTY);
+        $surname   = end($nameParts);
 
         return 'https://www.garuda-indonesia.com/id/id/booking-details?' . http_build_query([
             'bookingCode' => $this->pnr,
