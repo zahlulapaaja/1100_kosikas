@@ -4,143 +4,143 @@
 
 @section('content')
 
-    <h4 class="section-title mb-3">
-        <i class="bi bi-{{ $booking ? 'pencil-square' : 'file-earmark-plus' }} me-2"></i>
-        {{ $booking ? 'Edit E-Ticket - ' . $booking->pnr : 'Buat E-Ticket Baru' }}
-    </h4>
+<h4 class="section-title mb-3">
+    <i class="bi bi-{{ $booking ? 'pencil-square' : 'file-earmark-plus' }} me-2"></i>
+    {{ $booking ? 'Edit E-Ticket - ' . $booking->pnr : 'Buat E-Ticket Baru' }}
+</h4>
 
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Periksa kembali isian Anda:</strong>
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+@if ($errors->any())
+<div class="alert alert-danger">
+    <strong>Periksa kembali isian Anda:</strong>
+    <ul class="mb-0">
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
+
+@if ($maskapais->isEmpty() || $wilayahs->isEmpty())
+<div class="alert alert-warning">
+    Master <strong>Maskapai</strong> dan/atau <strong>Wilayah</strong> masih kosong.
+    Silakan tambahkan data master terlebih dahulu di menu
+    <a href="{{ route('travel.maskapai.index') }}">Master Maskapai</a> dan
+    <a href="{{ route('travel.wilayah.index') }}">Master Wilayah</a>.
+</div>
+@endif
+
+<form action="{{ $booking ? route('travel.bookings.update', $booking) : route('travel.bookings.store') }}" method="POST">
+    @csrf
+    @if ($booking)
+    @method('PUT')
     @endif
 
-    @if ($maskapais->isEmpty() || $wilayahs->isEmpty())
-        <div class="alert alert-warning">
-            Master <strong>Maskapai</strong> dan/atau <strong>Wilayah</strong> masih kosong.
-            Silakan tambahkan data master terlebih dahulu di menu
-            <a href="{{ route('travel.maskapai.index') }}">Master Maskapai</a> dan
-            <a href="{{ route('travel.wilayah.index') }}">Master Wilayah</a>.
-        </div>
-    @endif
-
-    <form action="{{ $booking ? route('travel.bookings.update', $booking) : route('travel.bookings.store') }}" method="POST">
-        @csrf
-        @if ($booking)
-            @method('PUT')
-        @endif
-
-        {{-- Data Agen --}}
-        <div class="card card-section mb-4">
-            <div class="card-body">
-                <h5 class="section-title mb-3"><i class="bi bi-briefcase-fill me-2"></i>Data Agen / Travel</h5>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Nama Agen / Travel</label>
-                        <input type="text" name="agency_name" class="form-control"
-                            value="{{ old('agency_name', $booking->agency_name ?? 'KOSIKAS TRAVEL') }}">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Tagline</label>
-                        <input type="text" name="agency_tagline" class="form-control"
-                            value="{{ old('agency_tagline', $booking->agency_tagline ?? 'Teman Setia Perjalanan Anda') }}">
-                    </div>
+    {{-- Data Agen --}}
+    <div class="card card-section mb-4">
+        <div class="card-body">
+            <h5 class="section-title mb-3"><i class="bi bi-briefcase-fill me-2"></i>Data Agen / Travel</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nama Agen / Travel</label>
+                    <input type="text" name="agency_name" class="form-control"
+                        value="{{ old('agency_name', $booking->agency_name ?? 'KOSIKAS TRAVEL') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tagline</label>
+                    <input type="text" name="agency_tagline" class="form-control"
+                        value="{{ old('agency_tagline', $booking->agency_tagline ?? 'Teman Setia Perjalanan Anda') }}">
                 </div>
             </div>
         </div>
+    </div>
 
-        {{-- Data Booking --}}
-        <div class="card card-section mb-4">
-            <div class="card-body">
-                <h5 class="section-title mb-3"><i class="bi bi-journal-bookmark-fill me-2"></i>Data Booking</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Booking Reference (PNR)</label>
-                        <input type="text" name="pnr" class="form-control text-uppercase"
-                            value="{{ old('pnr', $booking->pnr ?? '') }}" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Tanggal Diterbitkan</label>
-                        <input type="date" name="issued_date" class="form-control"
-                            value="{{ old('issued_date', isset($booking) ? $booking->issued_date->format('Y-m-d') : date('Y-m-d')) }}"
-                            required>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Mata Uang</label>
-                        <input type="text" name="currency" class="form-control"
-                            value="{{ old('currency', $booking->currency ?? 'IDR') }}">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Total Fare</label>
-                        <input type="number" step="0.01" name="total_fare" class="form-control"
-                            value="{{ old('total_fare', $booking->total_fare ?? '') }}" required>
-                    </div>
-                    <div class="col-12">
-                        <label class="form-label">Catatan Fare (opsional)</label>
-                        <input type="text" name="fare_note" class="form-control"
-                            value="{{ old('fare_note', $booking->fare_note ?? 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.') }}">
-                    </div>
+    {{-- Data Booking --}}
+    <div class="card card-section mb-4">
+        <div class="card-body">
+            <h5 class="section-title mb-3"><i class="bi bi-journal-bookmark-fill me-2"></i>Data Booking</h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Booking Reference (PNR)</label>
+                    <input type="text" name="pnr" class="form-control text-uppercase"
+                        value="{{ old('pnr', $booking->pnr ?? '') }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Tanggal Diterbitkan</label>
+                    <input type="date" name="issued_date" class="form-control"
+                        value="{{ old('issued_date', isset($booking) ? $booking->issued_date->format('Y-m-d') : date('Y-m-d')) }}"
+                        required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Mata Uang</label>
+                    <input type="text" name="currency" class="form-control"
+                        value="{{ old('currency', $booking->currency ?? 'IDR') }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Total Fare</label>
+                    <input type="number" step="0.01" name="total_fare" class="form-control"
+                        value="{{ old('total_fare', $booking->total_fare ?? '') }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Catatan Fare (opsional)</label>
+                    <input type="text" name="fare_note" class="form-control"
+                        value="{{ old('fare_note', $booking->fare_note ?? 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.') }}">
                 </div>
             </div>
         </div>
+    </div>
 
-        {{-- Detail Penerbangan --}}
-        <div class="card card-section mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="section-title mb-0"><i class="bi bi-airplane-engines-fill me-2"></i>Detail Penerbangan</h5>
-                    <button type="button" id="addFlight" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i>
-                        Tambah Penerbangan</button>
-                </div>
-                <div id="flightWrapper"></div>
+    {{-- Detail Penerbangan --}}
+    <div class="card card-section mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="section-title mb-0"><i class="bi bi-airplane-engines-fill me-2"></i>Detail Penerbangan</h5>
+                <button type="button" id="addFlight" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i>
+                    Tambah Penerbangan</button>
             </div>
+            <div id="flightWrapper"></div>
         </div>
+    </div>
 
-        {{-- Detail Penumpang --}}
-        <div class="card card-section mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="section-title mb-0"><i class="bi bi-people-fill me-2"></i>Detail Penumpang</h5>
-                    <button type="button" id="addPassenger" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i>
-                        Tambah Penumpang</button>
-                </div>
-                <div id="passengerWrapper"></div>
+    {{-- Detail Penumpang --}}
+    <div class="card card-section mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="section-title mb-0"><i class="bi bi-people-fill me-2"></i>Detail Penumpang</h5>
+                <button type="button" id="addPassenger" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i>
+                    Tambah Penumpang</button>
             </div>
+            <div id="passengerWrapper"></div>
         </div>
+    </div>
 
-        <div class="text-end mb-5">
-            <a href="{{ route('travel.bookings.index') }}" class="btn btn-outline-secondary btn-lg">Batal</a>
-            <button type="submit" class="btn btn-success btn-lg">
-                <i class="bi bi-save2-fill me-2"></i>{{ $booking ? 'Simpan Perubahan' : 'Simpan E-Ticket' }}
-            </button>
-        </div>
-    </form>
+    <div class="text-end mb-5">
+        <a href="{{ route('travel.bookings.index') }}" class="btn btn-outline-secondary btn-lg">Batal</a>
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="bi bi-save2-fill me-2"></i>{{ $booking ? 'Simpan Perubahan' : 'Simpan E-Ticket' }}
+        </button>
+    </div>
+</form>
 
 @endsection
 
 @push('scripts')
-    <script>
-        const maskapaiList = @json($maskapaiOptions);
-        const wilayahList = @json($wilayahOptions);
-        const existingFlights = @json($existingFlights);
-        const existingPassengers = @json($existingPassengers);
+<script>
+    const maskapaiList = @json($maskapaiOptions);
+    const wilayahList = @json($wilayahOptions);
+    const existingFlights = @json($existingFlights);
+    const existingPassengers = @json($existingPassengers);
 
-        let flightIndex = 0;
-        let passengerIndex = 0;
+    let flightIndex = 0;
+    let passengerIndex = 0;
 
-        function buildOptions(list, selectedId) {
-            return list.map(item =>
-                `<option value="${item.id}" ${String(item.id) === String(selectedId) ? 'selected' : ''}>${item.label}</option>`
-            ).join('');
-        }
+    function buildOptions(list, selectedId) {
+        return list.map(item =>
+            `<option value="${item.id}" ${String(item.id) === String(selectedId) ? 'selected' : ''}>${item.label}</option>`
+        ).join('');
+    }
 
-        function flightTemplate(i, f = {}) {
-            return `
+    function flightTemplate(i, f = {}) {
+        return `
     <div class="segment-block" data-flight-index="${i}">
         <button type="button" class="btn btn-sm btn-outline-danger btn-remove remove-flight"><i class="bi bi-x-lg"></i></button>
         <div class="row g-3">
@@ -186,17 +186,23 @@
                 <label class="form-label">Jam Tiba</label>
                 <input type="time" name="flights[${i}][arr_time]" class="form-control" value="${f.arr_time ?? ''}" required>
             </div>
+
+            <div class="col-12 text-center swap-wrapper">
+                <button type="button" class="btn btn-sm btn-outline-secondary swap-flight">
+                    <i class="bi bi-arrow-down-up me-1"></i>Tukar dengan penerbangan di bawah
+                </button>
+            </div>
         </div>
     </div>`;
-        }
+    }
 
-        function passengerTemplate(i, p = {}) {
-            const titleOptions = ['Mr.', 'Mrs.', 'Ms.'].map(t =>
-                `<option value="${t}" ${p.title === t ? 'selected' : ''}>${t}</option>`).join('');
-            const typeOptions = ['Adult', 'Child', 'Infant'].map(t =>
-                `<option value="${t}" ${p.type === t ? 'selected' : ''}>${t}</option>`).join('');
+    function passengerTemplate(i, p = {}) {
+        const titleOptions = ['Mr.', 'Mrs.', 'Ms.'].map(t =>
+            `<option value="${t}" ${p.title === t ? 'selected' : ''}>${t}</option>`).join('');
+        const typeOptions = ['Adult', 'Child', 'Infant'].map(t =>
+            `<option value="${t}" ${p.type === t ? 'selected' : ''}>${t}</option>`).join('');
 
-            return `
+        return `
     <div class="passenger-block" data-passenger-index="${i}">
         <button type="button" class="btn btn-sm btn-outline-danger btn-remove remove-passenger"><i class="bi bi-x-lg"></i></button>
         <div class="row g-3">
@@ -227,40 +233,74 @@
             </div>
         </div>
     </div>`;
-        }
+    }
 
-        function addFlight(data = {}) {
-            document.getElementById('flightWrapper').insertAdjacentHTML('beforeend', flightTemplate(flightIndex, data));
-            flightIndex++;
-        }
-
-        function addPassenger(data = {}) {
-            document.getElementById('passengerWrapper').insertAdjacentHTML('beforeend', passengerTemplate(passengerIndex,
-                data));
-            passengerIndex++;
-        }
-
-        document.getElementById('addFlight').addEventListener('click', () => addFlight());
-        document.getElementById('addPassenger').addEventListener('click', () => addPassenger());
-
-        document.getElementById('flightWrapper').addEventListener('click', function(e) {
-            if (e.target.closest('.remove-flight')) e.target.closest('.segment-block').remove();
+    // Sembunyikan tombol "Tukar" pada blok penerbangan terakhir
+    function updateSwapButtons() {
+        const blocks = document.querySelectorAll('#flightWrapper .segment-block');
+        blocks.forEach((block, idx) => {
+            block.querySelector('.swap-wrapper')
+                .classList.toggle('d-none', idx === blocks.length - 1);
         });
-        document.getElementById('passengerWrapper').addEventListener('click', function(e) {
-            if (e.target.closest('.remove-passenger')) e.target.closest('.passenger-block').remove();
+    }
+
+    // Tukar semua isian (nilai) antara dua blok penerbangan
+    function swapFlights(blockA, blockB) {
+        const fieldsA = blockA.querySelectorAll('input, select');
+        const fieldsB = blockB.querySelectorAll('input, select');
+        fieldsA.forEach((el, i) => {
+            const tmp = el.value;
+            el.value = fieldsB[i].value;
+            fieldsB[i].value = tmp;
         });
+    }
 
-        // Isi baris awal: dari data lama (edit / old input) atau satu baris kosong (create)
-        if (existingFlights.length) {
-            existingFlights.forEach(f => addFlight(f));
-        } else {
-            addFlight();
+    function addFlight(data = {}) {
+        document.getElementById('flightWrapper').insertAdjacentHTML('beforeend', flightTemplate(flightIndex, data));
+        flightIndex++;
+        updateSwapButtons();
+    }
+
+    function addPassenger(data = {}) {
+        document.getElementById('passengerWrapper').insertAdjacentHTML('beforeend', passengerTemplate(passengerIndex,
+            data));
+        passengerIndex++;
+    }
+
+    document.getElementById('addFlight').addEventListener('click', () => addFlight());
+    document.getElementById('addPassenger').addEventListener('click', () => addPassenger());
+
+    document.getElementById('flightWrapper').addEventListener('click', function(e) {
+        if (e.target.closest('.remove-flight')) {
+            e.target.closest('.segment-block').remove();
+            updateSwapButtons();
+            return;
         }
 
-        if (existingPassengers.length) {
-            existingPassengers.forEach(p => addPassenger(p));
-        } else {
-            addPassenger();
+        const swapBtn = e.target.closest('.swap-flight');
+        if (swapBtn) {
+            const current = swapBtn.closest('.segment-block');
+            const next = current.nextElementSibling;
+            if (next && next.classList.contains('segment-block')) {
+                swapFlights(current, next);
+            }
         }
-    </script>
+    });
+    document.getElementById('passengerWrapper').addEventListener('click', function(e) {
+        if (e.target.closest('.remove-passenger')) e.target.closest('.passenger-block').remove();
+    });
+
+    // Isi baris awal: dari data lama (edit / old input) atau satu baris kosong (create)
+    if (existingFlights.length) {
+        existingFlights.forEach(f => addFlight(f));
+    } else {
+        addFlight();
+    }
+
+    if (existingPassengers.length) {
+        existingPassengers.forEach(p => addPassenger(p));
+    } else {
+        addPassenger();
+    }
+</script>
 @endpush
