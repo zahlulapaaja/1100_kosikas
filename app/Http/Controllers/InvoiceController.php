@@ -209,9 +209,12 @@ class InvoiceController extends Controller
             $invoice->update(['invoice_code' => $this->generateInvoiceCode($invoice)]);
         }
 
-        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'))->setPaper('a4', 'portrait');
+        $view   = $invoice->is_paid ? 'invoices.pdf-lunas' : 'invoices.pdf';
+        $prefix = $invoice->is_paid ? 'invoice-lunas-' : 'invoice-';
 
-        return $pdf->stream('invoice-' . $invoice->invoice_code . '.pdf');
+        $pdf = Pdf::loadView($view, compact('invoice'))->setPaper('a4', 'portrait');
+
+        return $pdf->stream($prefix . $invoice->invoice_code . '.pdf');
     }
 
     /**

@@ -20,10 +20,14 @@ class Invoice extends Model
         'bank_account_holder',
         'signer_name',
         'notes',
+        'is_paid',
+        'paid_at',
+        'payment_method',
     ];
 
     protected $casts = [
         'issued_date' => 'date',
+        'is_paid' => 'boolean',
     ];
 
     public function items()
