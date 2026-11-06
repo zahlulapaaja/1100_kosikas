@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2026 at 02:50 AM
+-- Generation Time: Nov 06, 2026 at 03:09 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -123,7 +123,23 @@ INSERT INTO `bookings` (`id`, `agency_name`, `agency_tagline`, `pnr`, `issued_da
 (82, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'P96DYL', '2026-11-02', 'IDR', 1452630.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-02 12:32:33', '2026-11-02 15:37:05'),
 (83, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'DHZ84N', '2026-11-02', 'IDR', 3697890.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-02 15:34:38', '2026-11-02 15:35:35'),
 (84, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'FYMDUF', '2026-11-02', 'IDR', 1452630.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-02 15:35:39', '2026-11-02 15:36:16'),
-(85, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'X7RCXR', '2026-11-02', 'IDR', 1122630.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-02 15:36:28', '2026-11-02 15:36:45');
+(85, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'X7RCXR', '2026-11-02', 'IDR', 1122630.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-02 15:36:28', '2026-11-02 15:36:45'),
+(86, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'LWKQSS', '2026-11-03', 'IDR', 2598300.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 14:54:40', '2026-11-03 14:56:00'),
+(87, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'LWKQSS', '2026-11-03', 'IDR', 2598300.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 14:56:15', '2026-11-03 14:56:15'),
+(88, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'LWKQSS', '2026-11-03', 'IDR', 2598300.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 14:56:48', '2026-11-03 14:56:48'),
+(89, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'XQXZES', '2026-11-03', 'IDR', 2447221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 14:59:57', '2026-11-03 15:02:36'),
+(90, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'XQXZES', '2026-11-03', 'IDR', 2447221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 15:04:22', '2026-11-03 15:04:22'),
+(91, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'XQXZES', '2026-11-03', 'IDR', 2447221.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 15:04:43', '2026-11-03 15:04:43'),
+(92, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'BDGSYC', '2026-11-03', 'IDR', 2946666.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 15:13:34', '2026-11-03 15:13:34'),
+(93, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'UNOWCP', '2026-11-04', 'IDR', 1349100.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 23:43:12', '2026-11-03 23:43:12'),
+(94, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'UNOWCP', '2026-11-04', 'IDR', 1323700.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 23:45:16', '2026-11-03 23:46:19'),
+(95, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'CWHQUS', '2026-11-04', 'IDR', 1349100.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 23:46:28', '2026-11-03 23:47:40'),
+(96, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'NAYELX', '2026-11-04', 'IDR', 1323700.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-03 23:48:09', '2026-11-03 23:48:34'),
+(97, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'IEBMJW', '2026-11-04', 'IDR', 2672800.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-04 09:36:43', '2026-11-04 09:55:49'),
+(99, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'YBOJZD', '2026-11-06', 'IDR', 1349100.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-06 12:18:08', '2026-11-06 12:18:08'),
+(100, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'YBOJZD', '2026-11-06', 'IDR', 4047300.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-06 12:19:02', '2026-11-06 12:23:23'),
+(101, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'AYWNSP', '2026-11-06', 'IDR', 1323700.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-06 12:22:13', '2026-11-06 12:22:13'),
+(102, 'KOSIKAS TRAVEL', 'Teman Setia Perjalanan Anda', 'AYWNSP', '2026-11-06', 'IDR', 3971100.00, 'Sudah termasuk tarif dasar, pajak, biaya, dan biaya tambahan.', '2026-11-06 12:23:34', '2026-11-06 12:24:37');
 
 -- --------------------------------------------------------
 
@@ -277,7 +293,25 @@ INSERT INTO `flights` (`id`, `booking_id`, `maskapai_id`, `origin_wilayah_id`, `
 (225, 83, 14, 16, 1, '421', '2026-12-23', '16:45', '17:20', NULL, '2026-11-02 15:36:24', '2026-11-02 15:36:24'),
 (227, 85, 14, 16, 1, '421', '2026-12-23', '16:45', '17:20', NULL, '2026-11-02 15:36:45', '2026-11-02 15:36:45'),
 (228, 82, 14, 16, 1, '421', '2026-12-23', '16:45', '17:20', NULL, '2026-11-02 15:37:05', '2026-11-02 15:37:05'),
-(229, 80, 2, 2, 1, '146', '2026-11-06', '11:55', '14:45', NULL, '2026-11-02 15:45:25', '2026-11-02 15:45:25');
+(229, 80, 2, 2, 1, '146', '2026-11-06', '11:55', '14:45', NULL, '2026-11-02 15:45:25', '2026-11-02 15:45:25'),
+(233, 86, 6, 2, 1, '6898', '2026-11-14', '15:15', '18:00', 'L', '2026-11-03 14:56:00', '2026-11-03 14:56:00'),
+(236, 87, 6, 2, 1, '6898', '2026-11-14', '15:15', '18:00', 'L', '2026-11-03 14:56:42', '2026-11-03 14:56:42'),
+(238, 88, 6, 2, 1, '6898', '2026-11-14', '15:15', '18:00', 'L', '2026-11-03 14:57:07', '2026-11-03 14:57:07'),
+(241, 89, 8, 1, 2, '343', '2026-11-10', '12:25', '15:20', 'V', '2026-11-03 15:03:39', '2026-11-03 15:03:39'),
+(243, 90, 8, 1, 2, '343', '2026-11-10', '12:25', '15:20', 'V', '2026-11-03 15:04:38', '2026-11-03 15:04:38'),
+(245, 91, 8, 1, 2, '343', '2026-11-10', '12:25', '15:20', 'V', '2026-11-03 15:04:51', '2026-11-03 15:04:51'),
+(248, 92, 8, 1, 2, '343', '2026-11-05', '12:25', '15:20', 'S', '2026-11-03 15:14:32', '2026-11-03 15:14:32'),
+(249, 92, 8, 2, 21, '314', '2026-11-05', '17:45', '19:00', 'H', '2026-11-03 15:14:32', '2026-11-03 15:14:32'),
+(251, 93, 1, 4, 20, '863', '2026-11-10', '12:40', '14:00', 'W', '2026-11-03 23:45:09', '2026-11-03 23:45:09'),
+(253, 94, 1, 20, 4, '862', '2026-11-13', '07:05', '08:20', 'W', '2026-11-03 23:46:19', '2026-11-03 23:46:19'),
+(256, 95, 1, 4, 20, '863', '2026-11-10', '12:40', '14:00', 'W', '2026-11-03 23:47:40', '2026-11-03 23:47:40'),
+(258, 96, 1, 20, 4, '862', '2026-11-13', '07:05', '08:20', 'W', '2026-11-03 23:48:34', '2026-11-03 23:48:34'),
+(265, 97, 1, 4, 20, '863', '2026-11-10', '12:40', '14:00', 'W', '2026-11-04 09:55:49', '2026-11-04 09:55:49'),
+(266, 97, 1, 20, 4, '862', '2026-11-13', '07:05', '08:20', 'W', '2026-11-04 09:55:49', '2026-11-04 09:55:49'),
+(273, 101, 1, 20, 4, '862', '2026-11-15', '07:05', '08:20', 'W', '2026-11-06 12:22:54', '2026-11-06 12:22:54'),
+(274, 100, 1, 4, 20, '863', '2026-11-10', '12:40', '14:00', 'W', '2026-11-06 12:23:23', '2026-11-06 12:23:23'),
+(275, 99, 1, 4, 20, '863', '2026-11-10', '12:40', '14:00', 'W', '2026-11-06 12:23:31', '2026-11-06 12:23:31'),
+(277, 102, 1, 20, 4, '862', '2026-11-15', '07:05', '08:20', 'W', '2026-11-06 12:24:37', '2026-11-06 12:24:37');
 
 -- --------------------------------------------------------
 
@@ -358,7 +392,16 @@ INSERT INTO `invoices` (`id`, `invoice_code`, `issued_date`, `orderer_name`, `or
 (59, 'P20261017AB', '2026-10-31', 'Alfian', 'Kota Banda Aceh', NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, '2026-10-31 08:36:11', '2026-10-31 08:36:18'),
 (60, 'P20261031KK12', '2026-11-02', 'Ali Abrori', 'Aceh Barat Daya', '0823-1480-9831', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-02 16:00:28', '2026-11-02 16:01:03'),
 (61, 'P20261018IM', '2026-11-02', 'Ita Meriati', 'Kota Banda Aceh', '0852-6070-0555', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-02 16:02:44', '2026-11-02 16:03:39'),
-(62, 'P20261030HA', '2026-11-02', 'Hilda Aprina', 'Kota Banda Aceh', '0812-8858-1048', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-02 16:09:04', '2026-11-02 16:17:34');
+(62, 'P20261030HA', '2026-11-02', 'Hilda Aprina', 'Kota Banda Aceh', '0812-8858-1048', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-02 16:09:04', '2026-11-02 16:17:34'),
+(63, 'P20261102AS', '2026-11-03', 'Akhmad Sugito', 'Kota Banda Aceh', '0852-8363-1943', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 15:19:36', '2026-11-03 15:20:26'),
+(64, 'P20261102MT', '2026-11-03', 'Mega Thursina', 'Kota Banda Aceh', '0813-6060-1994', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 15:21:00', '2026-11-03 15:21:29'),
+(65, 'P20261102DS', '2026-11-03', 'Dwi Susanti', 'Kota Banda Aceh', '0852-7714-7288', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 15:22:02', '2026-11-03 15:22:12'),
+(66, 'P20261103TA', '2026-11-03', 'Tasdik Ilhamudin', 'Kota Banda Aceh', '0815-3402-0185', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 15:24:20', '2026-11-03 15:26:30'),
+(67, 'P20261103AA', '2026-11-04', 'Agus Andria', 'Kota Banda Aceh', '0821-6113-2379', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 23:49:55', '2026-11-03 23:50:36'),
+(68, 'P20261103KK17', '2026-11-04', 'Raja Maulana', 'Kutacane, Aceh Tenggara', '0811-6701-063', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-03 23:50:54', '2026-11-03 23:51:15'),
+(69, 'P20261103AA', '2026-11-06', 'Agus Andria', 'Kota Banda Aceh', '0821-6113-2379', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-06 12:59:26', '2026-11-06 13:00:13'),
+(70, 'P20261103KK18', '2026-11-06', 'Khairul Andri Lubis', 'Kabupaten Pidie Jaya', '0813-8362-6631', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-06 13:01:10', '2026-11-06 13:02:12'),
+(71, 'H20261105ZF', '2026-11-06', 'Zahlul Fuadi', 'Kota Banda Aceh', '0897-9846-945', NULL, NULL, NULL, NULL, NULL, 0, NULL, NULL, '2026-11-06 14:04:45', '2026-11-06 14:05:59');
 
 -- --------------------------------------------------------
 
@@ -505,7 +548,27 @@ INSERT INTO `invoice_items` (`id`, `invoice_id`, `booking_id`, `type`, `passenge
 (232, 62, 77, 'flight', 'Devi Erinda', 'Super Air Jet', 'BTJ-KUL', NULL, NULL, NULL, NULL, '20 Dec 2026', NULL, 1193600.00, 7, '2026-11-02 16:09:04', '2026-11-02 16:09:04'),
 (233, 62, 76, 'flight', 'Abu Bakar Adam +6 lainnya', 'Super Air Jet', 'BTJ-KUL', NULL, NULL, NULL, NULL, '20 Dec 2026', NULL, 8355200.00, 8, '2026-11-02 16:09:04', '2026-11-02 16:09:04'),
 (236, 62, NULL, 'extra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Diskon Pembelian Tiket', -420000.00, 9, '2026-11-02 16:20:39', '2026-11-02 16:20:39'),
-(237, 62, NULL, 'extra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Diskon Penambahan Bagasi', -90000.00, 10, '2026-11-02 16:20:39', '2026-11-02 16:20:39');
+(237, 62, NULL, 'extra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Diskon Penambahan Bagasi', -90000.00, 10, '2026-11-02 16:20:39', '2026-11-02 16:20:39'),
+(238, 63, 89, 'flight', 'Akhmad Sugito', 'Pelita Air', 'BTJ-CGK', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 2447221.00, 0, '2026-11-03 15:19:36', '2026-11-03 15:19:36'),
+(239, 63, 86, 'flight', 'Akhmad Sugito', 'Batik Air', 'CGK-BTJ', NULL, NULL, NULL, NULL, '14 Nov 2026', NULL, 2598300.00, 1, '2026-11-03 15:19:36', '2026-11-03 15:19:36'),
+(240, 64, 90, 'flight', 'Mega Thursina', 'Pelita Air', 'BTJ-CGK', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 2447221.00, 0, '2026-11-03 15:21:00', '2026-11-03 15:21:00'),
+(241, 64, 87, 'flight', 'Mega Thursina', 'Batik Air', 'CGK-BTJ', NULL, NULL, NULL, NULL, '14 Nov 2026', NULL, 2598300.00, 1, '2026-11-03 15:21:00', '2026-11-03 15:21:00'),
+(242, 65, 91, 'flight', 'Dwi Susanti', 'Pelita Air', 'BTJ-CGK', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 2447221.00, 0, '2026-11-03 15:22:02', '2026-11-03 15:22:02'),
+(243, 65, 88, 'flight', 'Dwi Susanti', 'Batik Air', 'CGK-BTJ', NULL, NULL, NULL, NULL, '14 Nov 2026', NULL, 2598300.00, 1, '2026-11-03 15:22:02', '2026-11-03 15:22:02'),
+(244, 66, 92, 'flight', 'Irmawati', 'Pelita Air', 'BTJ-CGK / CGK-PLM', NULL, NULL, NULL, NULL, '05 Nov 2026', NULL, 2946666.00, 0, '2026-11-03 15:24:20', '2026-11-03 15:24:20'),
+(245, 66, NULL, 'extra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Diskon', -70000.00, 1, '2026-11-03 15:26:30', '2026-11-03 15:26:30'),
+(246, 67, 94, 'flight', 'Agus Andria', 'Super Air Jet', 'PDG-KNO', NULL, NULL, NULL, NULL, '13 Nov 2026', NULL, 1323700.00, 0, '2026-11-03 23:49:55', '2026-11-03 23:49:55'),
+(247, 67, 93, 'flight', 'Agus Andria', 'Super Air Jet', 'KNO-PDG', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 1349100.00, 1, '2026-11-03 23:49:56', '2026-11-03 23:49:56'),
+(248, 68, 96, 'flight', 'Raja Maulana', 'Super Air Jet', 'PDG-KNO', NULL, NULL, NULL, NULL, '13 Nov 2026', NULL, 1323700.00, 0, '2026-11-03 23:50:54', '2026-11-03 23:50:54'),
+(249, 68, 95, 'flight', 'Raja Maulana', 'Super Air Jet', 'KNO-PDG', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 1349100.00, 1, '2026-11-03 23:50:54', '2026-11-03 23:50:54'),
+(250, 69, 97, 'flight', 'Reni Marlina', 'Super Air Jet', 'KNO-PDG / PDG-KNO', NULL, NULL, NULL, NULL, '10 Nov 2026 / 13 Nov 2026', NULL, 2672800.00, 0, '2026-11-06 12:59:26', '2026-11-06 12:59:26'),
+(251, 69, 94, 'flight', 'Agus Andria', 'Super Air Jet', 'PDG-KNO', NULL, NULL, NULL, NULL, '13 Nov 2026', NULL, 1323700.00, 1, '2026-11-06 12:59:26', '2026-11-06 12:59:26'),
+(252, 69, 93, 'flight', 'Agus Andria', 'Super Air Jet', 'KNO-PDG', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 1349100.00, 2, '2026-11-06 12:59:26', '2026-11-06 12:59:26'),
+(253, 70, 102, 'flight', 'Nova Odhiyani Sari Lutan +2 lainnya', 'Super Air Jet', 'PDG-KNO', NULL, NULL, NULL, NULL, '15 Nov 2026', NULL, 3971100.00, 0, '2026-11-06 13:01:10', '2026-11-06 13:01:10'),
+(254, 70, 101, 'flight', 'Khairul Andri Lubis', 'Super Air Jet', 'PDG-KNO', NULL, NULL, NULL, NULL, '15 Nov 2026', NULL, 1323700.00, 1, '2026-11-06 13:01:10', '2026-11-06 13:01:10'),
+(255, 70, 100, 'flight', 'Nova Odhiyani Sari Lutan +2 lainnya', 'Super Air Jet', 'KNO-PDG', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 4047300.00, 2, '2026-11-06 13:01:10', '2026-11-06 13:01:10'),
+(256, 70, 99, 'flight', 'Khairul Andri Lubis', 'Super Air Jet', 'KNO-PDG', NULL, NULL, NULL, NULL, '10 Nov 2026', NULL, 1349100.00, 3, '2026-11-06 13:01:11', '2026-11-06 13:01:11'),
+(257, 71, NULL, 'hotel', 'Zahlul Fuadi', NULL, NULL, 'Hotel Winton Lhokseumawe', 'Kota Lhokseumawe', '2026-11-03', '2026-11-05', NULL, NULL, 1180000.00, 0, '2026-11-06 14:05:59', '2026-11-06 14:05:59');
 
 -- --------------------------------------------------------
 
@@ -752,7 +815,27 @@ INSERT INTO `passengers` (`id`, `booking_id`, `title`, `name`, `type`, `id_numbe
 (311, 83, 'Ms.', 'Dhiya Alisha Zalvi', 'Adult', NULL, 'DHZ84N', '0Kg', '2026-11-02 15:36:24', '2026-11-02 15:36:24'),
 (318, 85, 'Mr.', 'Baihaqi Frilian Putra', 'Adult', NULL, 'X7RCXR', '0Kg', '2026-11-02 15:36:45', '2026-11-02 15:36:45'),
 (319, 82, 'Mrs.', 'Marjulia Fitri', 'Adult', NULL, 'P96DYL', '20Kg', '2026-11-02 15:37:05', '2026-11-02 15:37:05'),
-(320, 80, 'Mr.', 'Ali Abrori', 'Adult', NULL, '126 2148967423', '1PC', '2026-11-02 15:45:25', '2026-11-02 15:45:25');
+(320, 80, 'Mr.', 'Ali Abrori', 'Adult', NULL, '126 2148967423', '1PC', '2026-11-02 15:45:25', '2026-11-02 15:45:25'),
+(324, 86, 'Mr.', 'Akhmad Sugito', 'Adult', NULL, '9902153226810', '20Kg', '2026-11-03 14:56:00', '2026-11-03 14:56:00'),
+(327, 87, 'Mrs.', 'Mega Thursina', 'Adult', NULL, '9902153226811', '20Kg', '2026-11-03 14:56:42', '2026-11-03 14:56:42'),
+(329, 88, 'Mrs.', 'Dwi Susanti', 'Adult', NULL, '9902153226812', '20Kg', '2026-11-03 14:57:07', '2026-11-03 14:57:07'),
+(332, 89, 'Mr.', 'Akhmad Sugito', 'Adult', NULL, '7783009331920C1', '20Kg', '2026-11-03 15:03:39', '2026-11-03 15:03:39'),
+(334, 90, 'Mrs.', 'Mega Thursina', 'Adult', NULL, '7783009331922C1', '20Kg', '2026-11-03 15:04:38', '2026-11-03 15:04:38'),
+(336, 91, 'Mrs.', 'Dwi Susanti', 'Adult', NULL, '7783009331921C1', '20Kg', '2026-11-03 15:04:51', '2026-11-03 15:04:51'),
+(338, 92, 'Mrs.', 'Irmawati', 'Adult', NULL, '7783009330355', '20Kg', '2026-11-03 15:14:32', '2026-11-03 15:14:32'),
+(340, 93, 'Mr.', 'Agus Andria', 'Adult', NULL, '9382117459078', '10Kg', '2026-11-03 23:45:09', '2026-11-03 23:45:09'),
+(342, 94, 'Mr.', 'Agus Andria', 'Adult', NULL, '9382117459078', '10Kg', '2026-11-03 23:46:19', '2026-11-03 23:46:19'),
+(345, 95, 'Mr.', 'Raja Maulana', 'Adult', NULL, '9382117461112', '10Kg', '2026-11-03 23:47:40', '2026-11-03 23:47:40'),
+(347, 96, 'Mr.', 'Raja Maulana', 'Adult', NULL, '9902153317809', '10Kg', '2026-11-03 23:48:34', '2026-11-03 23:48:34'),
+(354, 97, 'Mrs.', 'Reni Marlina', 'Adult', NULL, '9382117469761', '10Kg', '2026-11-04 09:55:49', '2026-11-04 09:55:49'),
+(365, 101, 'Mr.', 'Khairul Andri Lubis', 'Adult', NULL, '9382117492196', '10Kg', '2026-11-06 12:22:54', '2026-11-06 12:22:54'),
+(366, 100, 'Mrs.', 'Nova Odhiyani Sari Lutan', 'Adult', NULL, '9382117492904', '10Kg', '2026-11-06 12:23:23', '2026-11-06 12:23:23'),
+(367, 100, 'Mrs.', 'Hajjah Anniwaty Nasution', 'Adult', NULL, '9382117492902', '10Kg', '2026-11-06 12:23:23', '2026-11-06 12:23:23'),
+(368, 100, 'Ms.', 'Faeyza Khaira Lubna Lubis', 'Child', NULL, '9382117492905', '10Kg', '2026-11-06 12:23:23', '2026-11-06 12:23:23'),
+(369, 99, 'Mr.', 'Khairul Andri Lubis', 'Adult', NULL, '9382117492903', '10Kg', '2026-11-06 12:23:31', '2026-11-06 12:23:31'),
+(371, 102, 'Mrs.', 'Nova Odhiyani Sari Lutan', 'Adult', NULL, '9382117492197', '10Kg', '2026-11-06 12:24:37', '2026-11-06 12:24:37'),
+(372, 102, 'Mrs.', 'Hajjah Anniwaty Nasution', 'Adult', NULL, '9382117492198', '10Kg', '2026-11-06 12:24:37', '2026-11-06 12:24:37'),
+(373, 102, 'Ms.', 'Faeyza Khaira Lubna Lubis', 'Child', NULL, '9382117492199', '10Kg', '2026-11-06 12:24:37', '2026-11-06 12:24:37');
 
 -- --------------------------------------------------------
 
@@ -911,7 +994,9 @@ INSERT INTO `penerbangans` (`id`, `wilayah_asal_id`, `wilayah_tujuan_id`, `maska
 (119, 16, 1, 14, '16:45:00', '17:20:00', 0, NULL, NULL, NULL, '2026-10-29 16:50:17', '2026-10-29 16:50:17'),
 (120, 16, 1, 1, '17:30:00', '18:05:00', 0, NULL, NULL, NULL, '2026-10-29 16:58:44', '2026-10-29 16:58:44'),
 (121, 16, 1, 14, '07:30:00', '08:00:00', 0, NULL, NULL, NULL, '2026-10-29 16:59:50', '2026-10-29 16:59:50'),
-(122, 4, 20, 1, '13:40:00', '15:00:00', 0, NULL, NULL, NULL, '2026-11-02 12:11:05', '2026-11-02 12:11:05');
+(122, 4, 20, 1, '13:40:00', '15:00:00', 0, NULL, NULL, NULL, '2026-11-02 12:11:05', '2026-11-02 12:11:05'),
+(123, 20, 4, 1, '07:05:00', '08:20:00', 0, NULL, NULL, NULL, '2026-11-03 23:58:10', '2026-11-03 23:58:10'),
+(124, 2, 1, 1, '06:00:00', '10:05:00', 1, 4, 40, NULL, '2026-11-04 10:15:05', '2026-11-04 10:15:05');
 
 -- --------------------------------------------------------
 
@@ -933,8 +1018,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('CYwg8jV2JcmMywjDNSuErNjYWfgZCNh45mgbOTKr', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiZjdwYlEyZFN3OXJxVG5ORUQ4NUhUUHplT3phMmVJcFJMQXNqT2o0WiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9pbnZvaWNlcyI7czo1OiJyb3V0ZSI7czoyMToidHJhdmVsLmludm9pY2VzLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1793636442),
-('yDwkpW84vwj7ja0wdnrpHsLRUNICoUfRbgNkVZEX', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiN1B4ckk2MWwzcEt6blFoRThrMHF6VmNRekpXSExJNVl6cTVaaFJJNCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9ib29raW5ncyI7czo1OiJyb3V0ZSI7czoyMToidHJhdmVsLmJvb2tpbmdzLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1793670591);
+('mPDcMJq40AyqB5TanpCsQwFKEvAifXvfPH6EqUsZ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZ2FpZFlsR1d4ejNUWmtMcGR6UVNmT0lJdmlnelNEM1ZKU096WjBweiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzA6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMC9pbnZvaWNlcyI7czo1OiJyb3V0ZSI7czoyMToidHJhdmVsLmludm9pY2VzLmluZGV4Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1793973971);
 
 -- --------------------------------------------------------
 
@@ -1007,7 +1091,8 @@ INSERT INTO `wilayahs` (`id`, `airport_name`, `code_iata`, `code_icao`, `city_na
 (17, 'Hamad International Airport', 'DOH', 'OTHH', 'Doha', 'Doha', 'Qatar', 25.2730560, 51.6080560, 'Asia/Qatar', 'international', 1, '2026-10-02 14:58:52', '2026-10-02 14:58:52'),
 (18, 'London Heathrow Airport', 'LHR', 'EGLL', 'London', 'Greater London', 'United Kingdom', 51.4700000, -0.4543000, 'Europe/London', 'international', 1, '2026-10-02 14:59:40', '2026-10-02 14:59:40'),
 (19, 'Bandara Blangkejeren', 'GYO', 'WIMG', 'Gayo Lues', 'Aceh', 'Indonesia', 3.9455560, 97.3636110, 'Asia/Jakarta', 'domestic', 1, '2026-10-09 23:23:11', '2026-10-09 23:23:11'),
-(20, 'Bandara Internasional Minangkabau', 'PDG', 'WIEE', 'Padang', 'Sumatera Barat', 'Indonesia', -0.7866470, 100.2863280, 'Asia/Jakarta', 'domestic', 1, '2026-11-02 12:09:41', '2026-11-02 12:09:41');
+(20, 'Bandara Internasional Minangkabau', 'PDG', 'WIEE', 'Padang', 'Sumatera Barat', 'Indonesia', -0.7866470, 100.2863280, 'Asia/Jakarta', 'domestic', 1, '2026-11-02 12:09:41', '2026-11-02 12:09:41'),
+(21, 'Bandara Internasional Sultan Mahmud Badaruddin II', 'PLM', 'WIPP', 'Palembang', 'Sumatera Selatan', 'Indonesia', -2.9002780, 104.7000000, 'Asia/Jakarta', 'domestic', 1, '2026-11-03 15:08:17', '2026-11-03 15:08:17');
 
 --
 -- Indexes for dumped tables
@@ -1146,7 +1231,7 @@ ALTER TABLE `wilayahs`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -1158,19 +1243,19 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `flights`
 --
 ALTER TABLE `flights`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=230;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=278;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `invoice_items`
 --
 ALTER TABLE `invoice_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=238;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
 
 --
 -- AUTO_INCREMENT for table `jobs`
@@ -1194,13 +1279,13 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `passengers`
 --
 ALTER TABLE `passengers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=321;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
 
 --
 -- AUTO_INCREMENT for table `penerbangans`
 --
 ALTER TABLE `penerbangans`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1212,7 +1297,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `wilayahs`
 --
 ALTER TABLE `wilayahs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
